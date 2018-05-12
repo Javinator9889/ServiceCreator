@@ -20,3 +20,7 @@ MAIN_PROGRAM_USAGE = Colors.HEADER + MAIN_PROGRAM_NAME + Colors.END_COLOR + "\nU
                                         "folder\n\t- disable: will disable service from starting on computer boot" \
                      + Colors.END_COLOR + "\n\nThe script you create will store its logs in \"/var/log\" directory," \
                                           " with your service name."
+MAIN_PROGRAM_URL = "https://github.com/Javinator9889/ServiceCreator"
+
+# Other params
+OP_VERSION_RAW = "https://github.com/Javinator9889/KernelUpgrader/raw/master/version.json"
