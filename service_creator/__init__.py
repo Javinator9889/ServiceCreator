@@ -98,6 +98,10 @@ def application(args: argparse.Namespace):
                                 cprint("Please, give me the new username you want the service to be run with",
                                        Colors.UNDERLINE)
                                 is_valid_user = False
+                        else:
+                            cprint("The username you provide does not exists. Please, add a proper username",
+                                   Colors.FAIL)
+                            is_valid_user = False
                     command = ""
                     if shouldContinueWith(I_READ_COMMAND_FROM_FILE):
                         filename = ""
