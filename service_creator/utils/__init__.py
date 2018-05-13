@@ -94,7 +94,7 @@ def ifCommandExists(command: str):
     # type: () -> bool
     from shutil import which
 
-    return which(command) is not None
+    return which(command.split()[0]) is not None
 
 
 def getCommandFullPath(command: str):
