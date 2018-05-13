@@ -1,13 +1,26 @@
 from service_creator.values import OutputColors
 
 
-class Printer:
-    @staticmethod
-    def cprint(text, color: str=None):
-        if color is None:
-            print(str(text))
-        else:
-            print(color + str(text) + OutputColors.END_COLOR)
+# class Printer:
+#    @staticmethod
+def cprint(text, color: str = None):
+    if color is None:
+        print(str(text))
+    else:
+        print(color + str(text) + OutputColors.END_COLOR)
+
+
+def prompt_input(text, color: str = None):
+    # type: () -> str
+    if text is None:
+        text = ""
+    if color is None:
+        user_input = input(text)
+        return user_input
+    else:
+        colored_text = color + text + OutputColors.END_COLOR
+        user_input = input(colored_text)
+        return user_input
 
 
 class Animation:
@@ -20,7 +33,7 @@ class Animation:
         self.__stop_event = self.Event()
         self.__force_stop_event = self.Event()
 
-    def animate(self, text, text_animation_end: str=None, color: str=None):
+    def animate(self, text, text_animation_end: str = None, color: str = None):
         self.__stop_event.clear()
         self.__force_stop_event.clear()
 
@@ -28,7 +41,7 @@ class Animation:
         animation_thread.setDaemon(True)
         animation_thread.start()
 
-    def __animation(self, text, text_animation_end: str=None, color: str=None):
+    def __animation(self, text, text_animation_end: str = None, color: str = None):
         import time
         from service_creator.values import OutputColors
 

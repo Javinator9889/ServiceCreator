@@ -23,4 +23,26 @@ MAIN_PROGRAM_USAGE = Colors.HEADER + MAIN_PROGRAM_NAME + Colors.END_COLOR + "\nU
 MAIN_PROGRAM_URL = "https://github.com/Javinator9889/ServiceCreator"
 
 # Other params
-OP_VERSION_RAW = "https://github.com/Javinator9889/KernelUpgrader/raw/master/version.json"
+OP_VERSION_RAW = "https://github.com/Javinator9889/ServiceCreator/raw/master/version.json"
+OP_BASH_HEADER = "#!/bin/bash"
+OP_SH_HEADER = "#!/bin/bash"
+
+# Paths
+P_ETC_INIT_DIR = "/etc/init.d/"
+P_USR_LOCAL_BIN_DIR = "/usr/local/bin/"
+
+# Inputs
+I_PATH_NOT_FOUND = Colors.BOLD + "Please, provide a complete path where the script will be stored: " + Colors.END_COLOR
+I_SERVICE_NAME = Colors.OK_BLUE + "Which name will have the service?: " + Colors.END_COLOR
+I_CORRECT_SERVICE_NAME = "The name you chose is \"{}\". Is that correct?"
+I_USERNAME = Colors.OK_BLUE + "Now, tell me with which user permissions should the scrip be executed (this field is a" \
+                              " username): " + Colors.END_COLOR
+I_CORRECT_USERNAME = "The username you chose is \"{}\". Is that correct?"
+I_READ_COMMAND_FROM_FILE = Colors.OK_BLUE + "It is almost completed. Now you must tell me which command will the " \
+                                            "service execute." + Colors.END_COLOR + Colors.BOLD + \
+                           " Would you like to load it from file?" + Colors.END_COLOR
+I_FILENAME = Colors.UNDERLINE + "Please, give me the complete filename: " + Colors.END_COLOR
+I_COMMAND = Colors.OK_BLUE + "Type the command your service must execute on boot (be careful with new lines): " \
+            + Colors.END_COLOR
+I_SHORT_DESCRIPTION = Colors.OK_BLUE + "Enter a short description for your service: " + Colors.END_COLOR
+I_LONG_DESCRIPTION = Colors.OK_BLUE + "Enter a long description for your service. It can be empty: " + Colors.END_COLOR
