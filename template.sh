@@ -76,6 +76,23 @@ status() {
     fi
 }
 
+disable() {
+    printf "Disabling service from boot..."
+    printf "This will cause your service not running on boot and stopping it right now"
+    stop
+    update-rc.d -f $NAME remove
+    printf "Service correctly disabled"
+}
+
+enable_again() {
+    printf "Enabling service..."
+    printf "This will cause your service running on boot and restarting it right now"
+    stop
+    start
+    update-rc.d $NAME defaults
+    printf "Service correctly enabled"
+}
+
 
 case "$1" in
   start)
@@ -94,6 +111,12 @@ case "$1" in
     stop
     start
     ;;
+  disable)
+    disable
+    ;;
+  enable)
+    enable_again
+    ;;
   *)
-    echo "Usage: $0 {start|stop|status|restart|uninstall}"
+    echo "Usage: $0 {start|stop|status|restart|uninstall|disable|enable}"
 esac
