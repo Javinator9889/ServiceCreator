@@ -19,18 +19,27 @@ from .values.Constants import (MAIN_PROGRAM_NAME,
                                I_FILENAME,
                                I_COMMAND,
                                I_SHORT_DESCRIPTION,
-                               I_LONG_DESCRIPTION)
+                               I_LONG_DESCRIPTION,
+                               ANIM_CREATING_LOG_FILE,
+                               ANIM_GENERATING_FILE,
+                               ANIM_APPLYING_NEW_CONFIGURATION,
+                               ANIM_STARTING_SERVICE)
 from .utils import (isRunningLinux,
                     isUserAdmin,
                     isNewVersionAvailable,
                     shouldContinueWith,
+                    cleanString,
                     isAnExistingUser,
                     makeBashScript,
                     ifCommandExists,
-                    getCommandFullPath)
+                    getCommandFullPath,
+                    generateLogFile,
+                    generateNewServiceFileFromTemplate,
+                    applyConfigurationIsSuccessful,
+                    startServiceIsSuccessful)
 from .exceptions import LinuxSystemNotFound, NoRootPermissions
 from .output import OutputColors as Colors
-from .output import cprint
+from .output import cprint, Animation
 
 
 def application(args: argparse.Namespace):
@@ -39,6 +48,7 @@ def application(args: argparse.Namespace):
         print(MAIN_PROGRAM_USAGE)
         exit(2)
     else:
+        animator = Animation(0.1)
         try:
             if isNewVersionAvailable():
                 cprint("There is a new version available | Download it via pip or go to this URL: "
@@ -56,6 +66,7 @@ def application(args: argparse.Namespace):
                             service_folder = partial_dir + '/'
                         else:
                             service_folder = partial_dir
+                    service_name = ""
                     is_valid_service_name = False
                     while not is_valid_service_name:
                         service_name = input(I_SERVICE_NAME)
@@ -68,10 +79,12 @@ def application(args: argparse.Namespace):
                             is_valid_service_name = False
                         else:
                             if shouldContinueWith(I_CORRECT_SERVICE_NAME.format(service_name)):
+                                service_name = cleanString(service_name)
                                 is_valid_service_name = True
                             else:
                                 cprint("Please, give me the new name you want the service to have", Colors.UNDERLINE)
                                 is_valid_service_name = False
+                    username = ""
                     is_valid_user = False
                     while not is_valid_user:
                         username = input(I_USERNAME)
@@ -134,6 +147,7 @@ def application(args: argparse.Namespace):
                             is_valid_short_description = False
                         else:
                             is_valid_short_description = True
+                    long_description = ""
                     is_valid_description = False
                     while not is_valid_description:
                         long_description = input(I_LONG_DESCRIPTION)
@@ -142,7 +156,40 @@ def application(args: argparse.Namespace):
                             is_valid_description = True
                         else:
                             is_valid_description = True
-
+                    animator.animate(ANIM_CREATING_LOG_FILE, None, Colors.OK_BLUE)
+                    generateLogFile(service_name, username)
+                    animator.stop()
+                    time.sleep(1)
+                    animator.animate(ANIM_GENERATING_FILE, None, Colors.OK_BLUE)
+                    generateNewServiceFileFromTemplate(service_name, username, command, short_description,
+                                                       long_description)
+                    animator.stop()
+                    time.sleep(1)
+                    animator.animate(ANIM_APPLYING_NEW_CONFIGURATION, None, Colors.OK_BLUE)
+                    if applyConfigurationIsSuccessful(service_name):
+                        animator.stop()
+                        time.sleep(1)
+                        animator.animate(ANIM_STARTING_SERVICE, None, Colors.OK_BLUE)
+                        if startServiceIsSuccessful(service_name):
+                            animator.stop()
+                            time.sleep(1)
+                            cprint("All operations complete. Now you should be able to use all options with \"service"
+                                   + service_name + "\" command. You can uninstall just adding \"uninstall\" to the"
+                                                    " latest command.", Colors.BOLD)
+                            exit(0)
+                        else:
+                            animator.force_stop()
+                            cprint("There was an error while trying to start your new service. Please, check logs",
+                                   Colors.FAIL)
+                            exit(-1)
+                    else:
+                        animator.force_stop()
+                        cprint("There was an error while trying to register your new service at boot. Please, check"
+                               " logs", Colors.FAIL)
+                        exit(-2)
+                else:
+                    raise NoRootPermissions(Colors.FAIL + "This app requires root access in order to work properly |"
+                                                          " More info: " + MAIN_PROGRAM_URL + Colors.END_COLOR)
             else:
                 raise LinuxSystemNotFound(Colors.FAIL + "Linux system not found on this machine. You must use Linux to"
                                                         " use this app" + Colors.END_COLOR)

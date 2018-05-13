@@ -24,20 +24,20 @@ def prompt_input(text, color: str = None):
 
 
 class Animation:
-    from threading import Event, Thread
+    from threading import Event as __Event, Thread as __Thread
 
     __animation_values = "|/-\\"
 
     def __init__(self, duration: float):
         self.__duration = duration
-        self.__stop_event = self.Event()
-        self.__force_stop_event = self.Event()
+        self.__stop_event = self.__Event()
+        self.__force_stop_event = self.__Event()
 
     def animate(self, text, text_animation_end: str = None, color: str = None):
         self.__stop_event.clear()
         self.__force_stop_event.clear()
 
-        animation_thread = self.Thread(target=self.__animation, args=(text, text_animation_end, color,))
+        animation_thread = self.__Thread(target=self.__animation, args=(text, text_animation_end, color,))
         animation_thread.setDaemon(True)
         animation_thread.start()
 

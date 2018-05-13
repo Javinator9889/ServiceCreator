@@ -34,6 +34,13 @@ def exportVersion():
         pickle.dump(version_dict, file, pickle.HIGHEST_PROTOCOL)
 
 
+def cleanString(input_string: str):
+    # type: () -> str
+    import re
+
+    return re.sub("[^-a-zA-Z0-9]", '', input_string)
+
+
 def shouldContinueWith(text: str):
     # type: () -> bool
     from service_creator.output import prompt_input
@@ -98,7 +105,17 @@ def getCommandFullPath(command: str):
 
 
 def getUsernameUID(username: str):
-    
+    # type: () -> int
+    import pwd
+
+    return pwd.getpwnam(username).pw_uid
+
+
+def getUsernameGID(username: str):
+    # type: () -> int
+    import pwd
+
+    return pwd.getpwnam(username).pw_gid
 
 
 def generateLogFile(service_name: str, username: str):
@@ -106,4 +123,45 @@ def generateLogFile(service_name: str, username: str):
 
     new_file = open("/var/log/" + service_name, 'w')
     new_file.close()
-    os.chown("/var/log/" + service_name, username)
+    os.chown("/var/log/" + service_name, getUsernameUID(username), getUsernameGID(username))
+
+
+def generateNewServiceFileFromTemplate(service_name: str, username: str, command: str, short_description: str,
+                                       long_description: str):
+    import requests
+    import os
+    from service_creator.values.Constants import OP_TEMPLATE_FILE, P_ETC_INIT_DIR
+
+    web_template = requests.get(OP_TEMPLATE_FILE)
+    template = web_template.text
+
+    template.replace("<NAME>", service_name)
+    template.replace("<SHORT-DESCRIPTION>", short_description)
+    template.replace("<DESCRIPTION>", long_description)
+    template.replace("<COMMAND>", command)
+    template.replace("<USERNAME>", username)
+
+    with open(P_ETC_INIT_DIR + service_name, 'w') as new_script_file:
+        new_script_file.write(template)
+    os.chmod(P_ETC_INIT_DIR + service_name, 0o755)
+
+
+def applyConfigurationIsSuccessful(service_name: str):
+    # type: () -> bool
+    import subprocess
+    from service_creator.values.Constants import C_UPDATE_RC
+
+    command = C_UPDATE_RC.format(service_name)
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return_code = process.returncode
+    return return_code == 0
+
+
+def startServiceIsSuccessful(service_name: str):
+    # type: () -> bool
+    import subprocess
+
+    command = "service {} start".format(service_name)
+    start_process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return_code = start_process.returncode
+    return return_code == 0

@@ -26,6 +26,7 @@ MAIN_PROGRAM_URL = "https://github.com/Javinator9889/ServiceCreator"
 OP_VERSION_RAW = "https://github.com/Javinator9889/ServiceCreator/raw/master/version.json"
 OP_BASH_HEADER = "#!/bin/bash"
 OP_SH_HEADER = "#!/bin/bash"
+OP_TEMPLATE_FILE = "https://github.com/Javinator9889/ServiceCreator/raw/master/template.sh"
 
 # Paths
 P_ETC_INIT_DIR = "/etc/init.d/"
@@ -33,7 +34,8 @@ P_USR_LOCAL_BIN_DIR = "/usr/local/bin/"
 
 # Inputs
 I_PATH_NOT_FOUND = Colors.BOLD + "Please, provide a complete path where the script will be stored: " + Colors.END_COLOR
-I_SERVICE_NAME = Colors.OK_BLUE + "Which name will have the service?: " + Colors.END_COLOR
+I_SERVICE_NAME = Colors.OK_BLUE + "Which name will have the service? (Notice that special characters such as \"\\n\" " \
+                                  "or whitespaces \" \" will be deleted): " + Colors.END_COLOR
 I_CORRECT_SERVICE_NAME = "The name you chose is \"{}\". Is that correct?"
 I_USERNAME = Colors.OK_BLUE + "Now, tell me with which user permissions should the scrip be executed (this field is a" \
                               " username): " + Colors.END_COLOR
@@ -46,3 +48,12 @@ I_COMMAND = Colors.OK_BLUE + "Type the command your service must execute on boot
             + Colors.END_COLOR
 I_SHORT_DESCRIPTION = Colors.OK_BLUE + "Enter a short description for your service: " + Colors.END_COLOR
 I_LONG_DESCRIPTION = Colors.OK_BLUE + "Enter a long description for your service. It can be empty: " + Colors.END_COLOR
+
+# Animation texts
+ANIM_GENERATING_FILE = "Generating new script file..."
+ANIM_CREATING_LOG_FILE = "Creating new log file for the created script..."
+ANIM_APPLYING_NEW_CONFIGURATION = "Copying new file and updating boot configuration..."
+ANIM_STARTING_SERVICE = "Starting new service..."
+
+# Commands
+C_UPDATE_RC = "update-rc.d {} defaults"
