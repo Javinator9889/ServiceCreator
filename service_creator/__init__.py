@@ -42,8 +42,8 @@ from .output import OutputColors as Colors
 from .output import cprint, Animation
 
 
-def application(args):
-    is_usage_chosen = args.u
+def application(args: argparse.Namespace):
+    is_usage_chosen = args.usage
     if is_usage_chosen:
         print(MAIN_PROGRAM_USAGE)
         exit(2)
