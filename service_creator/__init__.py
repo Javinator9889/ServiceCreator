@@ -193,6 +193,11 @@ def application(args: argparse.Namespace):
             else:
                 raise LinuxSystemNotFound(Colors.FAIL + "Linux system not found on this machine. You must use Linux to"
                                                         " use this app" + Colors.END_COLOR)
+        except KeyboardInterrupt:
+            animator.force_stop()
+            time.sleep(1)
+            cprint("All changes will not be saved", Colors.FAIL)
+            exit(-3)
         except Exception as e:
             print(e)
 
