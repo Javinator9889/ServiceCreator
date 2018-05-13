@@ -47,7 +47,7 @@ def shouldContinueWith(text: str):
     from service_creator.output import OutputColors
     from service_creator.exceptions import NonValidInput
 
-    text_for_input = text + " [Y/n]"
+    text_for_input = text + " [Y/n]: "
     user_selection = prompt_input(text_for_input, OutputColors.BOLD).lower()
     if (user_selection == 'y') or (user_selection == "yes"):
         return True

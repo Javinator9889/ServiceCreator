@@ -17,9 +17,9 @@ MAIN_PROGRAM_USAGE = Colors.HEADER + MAIN_PROGRAM_NAME + Colors.END_COLOR + "\nU
                                         " stop executing the service if running\n\t- restart: first, stops the " \
                                         "service if running and then starts it again\n\t- uninstall: stops the " \
                                         "service if running. Then, removes the service from boot and from " \
-                                        "\"/etc/init.d\" folder\n\t- disable: will disable service from starting on " \
-                                        "computer boot\n\t- enable: will enable the service for starting on computer " \
-                                        "boot\n\t- status: will show the current status for the service" \
+                                        "\"/etc/init.d\" folder\n\t- disable: will disable the service from starting " \
+                                        "on computer boot\n\t- enable: will enable the service for starting on " \
+                                        "computer boot\n\t- status: will show the current status for the service" \
                      + Colors.END_COLOR + "\n\nThe script you create will store its logs in \"/var/log\" directory," \
                                           " with your service name."
 MAIN_PROGRAM_URL = "https://github.com/Javinator9889/ServiceCreator"
