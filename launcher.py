@@ -1,5 +1,5 @@
-from service_creator import main
+import service_creator
 
 
 if __name__ == '__main__':
-    main()
+    service_creator.main()
