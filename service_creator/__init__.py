@@ -42,7 +42,7 @@ from .output import OutputColors as Colors
 from .output import cprint, Animation
 
 
-def application(args: argparse.Namespace):
+def application(args):
     is_usage_chosen = args.u
     if is_usage_chosen:
         print(MAIN_PROGRAM_USAGE)
