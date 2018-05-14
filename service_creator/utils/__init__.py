@@ -156,9 +156,10 @@ def applyConfigurationIsSuccessful(service_name: str):
     from service_creator.values.Constants import C_UPDATE_RC
 
     command = C_UPDATE_RC.format(service_name)
-    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.run(command.split())
+    """process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     print(process.stdout.read().decode("utf-8"))
-    print(process.stderr.read().decode("utf-8"))
+    print(process.stderr.read().decode("utf-8"))"""
     return_code = process.returncode
     return return_code == 0
 
@@ -168,6 +169,9 @@ def startServiceIsSuccessful(service_name: str):
     import subprocess
 
     command = "service {} start".format(service_name)
-    start_process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    start_process = subprocess.run(command.split())
+    """start_process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(start_process.stdout.read().decode("utf-8"))
+    print(start_process.stderr.read().decode("utf-8"))"""
     return_code = start_process.returncode
     return return_code == 0

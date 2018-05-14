@@ -232,11 +232,13 @@ def application(args: argparse.Namespace):
                             exit(0)
                         else:
                             animator.force_stop()
+                            time.sleep(1)
                             cprint("There was an error while trying to start your new service. Please, check logs",
                                    Colors.FAIL)
                             exit(-1)
                     else:
                         animator.force_stop()
+                        time.sleep(1)
                         cprint("There was an error while trying to register your new service at boot. Please, check"
                                " logs", Colors.FAIL)
                         exit(-2)
