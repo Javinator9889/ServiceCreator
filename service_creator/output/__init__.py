@@ -48,20 +48,19 @@ class Animation:
         if text_animation_end is None:
             text_animation_end = "OK"
         idx = 0
-        if color is None:
+        """if color is None:
             end_color = ""
             color = ""
         else:
-            end_color = OutputColors.END_COLOR
+            end_color = OutputColors.END_COLOR"""
         while not self.__stop_event.is_set():
-            print(text + " " + color + "[" + self.__animation_values[idx % len(self.__animation_values)] + "]"
-                  + end_color, end="\r")
+            print(text + " " + "[" + self.__animation_values[idx % len(self.__animation_values)] + "]", end="\r")
             idx += 1
             time.sleep(self.__duration)
         if self.__force_stop_event.is_set():
-            print(text + " " + OutputColors.FAIL + "[FAIL]" + end_color, end="\r")
+            print(text + " " + OutputColors.FAIL + "[FAIL]" + OutputColors.END_COLOR, end="\r")
         else:
-            print(text + " " + OutputColors.OK_GREEN + text_animation_end + end_color, end="\r")
+            print(text + " " + OutputColors.OK_GREEN + text_animation_end + OutputColors.END_COLOR, end="\r")
         print("\n")
 
     def stop(self):

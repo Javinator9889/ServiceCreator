@@ -245,8 +245,10 @@ def application(args: argparse.Namespace):
             time.sleep(1)
             exit(-3)
         except Exception as e:
+            import traceback
+
             print(e)
-            raise RuntimeError(e).with_traceback(e)
+            traceback.print_exc()
 
 
 def main():
