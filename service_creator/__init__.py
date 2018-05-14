@@ -94,9 +94,9 @@ def ask_for_username_permissions():
     return username
 
 
-def request_command_for_service():
+def request_command_for_service(service_name: str):
     # type: () -> str
-    import os
+    # import os
     from .values.Constants import I_READ_COMMAND_FROM_FILE, I_FILENAME, I_COMMAND, I_FILENAME_DESC
     from .utils import makeBashScript, ifCommandExists, getCommandFullPath
 
@@ -122,7 +122,8 @@ def request_command_for_service():
             else:
                 is_valid_filename = True
         is_valid_script_filename = False
-        new_name = os.path.basename(filename)
+        # new_name = os.path.basename(filename)
+        new_name = service_name
         while not is_valid_script_filename:
             if not makeBashScript(filename, new_name):
                 new_name = input(Colors.FAIL + "We found an error creating the executable file. "
@@ -204,7 +205,7 @@ def application(args: argparse.Namespace):
                     service_folder = check_init_d_folder()
                     service_name = ask_for_service_name(service_folder)
                     username = ask_for_username_permissions()
-                    command = request_command_for_service()
+                    command = request_command_for_service(service_name)
                     short_description = request_short_description()
                     long_description = request_long_description(short_description)
 
