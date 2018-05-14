@@ -246,6 +246,7 @@ def application(args: argparse.Namespace):
             exit(-3)
         except Exception as e:
             print(e)
+            raise RuntimeError(e).with_traceback(e)
 
 
 def main():
