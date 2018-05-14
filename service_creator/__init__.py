@@ -96,12 +96,13 @@ def ask_for_username_permissions():
 
 def request_command_for_service():
     # type: () -> str
-    from .values.Constants import I_READ_COMMAND_FROM_FILE, I_FILENAME, I_COMMAND
+    from .values.Constants import I_READ_COMMAND_FROM_FILE, I_FILENAME, I_COMMAND, I_FILENAME_DESC
     from .utils import makeBashScript, ifCommandExists, getCommandFullPath
 
     command = ""
     if shouldContinueWith(I_READ_COMMAND_FROM_FILE):
         filename = ""
+        print(I_FILENAME_DESC)
         is_valid_filename = False
         while not is_valid_filename:
             filename = input(I_FILENAME)
