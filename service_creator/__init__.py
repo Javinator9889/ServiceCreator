@@ -113,6 +113,10 @@ def request_command_for_service():
                 cprint("We have not found the file. Please, enter the full path for the file",
                        Colors.FAIL)
                 is_valid_filename = False
+            elif os.path.isdir(filename):
+                cprint("The provided path is a directory. Please, use a full path with the filename",
+                       Colors.FAIL)
+                is_valid_filename = False
             else:
                 is_valid_filename = True
         is_valid_script_filename = False
