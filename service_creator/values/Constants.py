@@ -5,7 +5,7 @@ MAIN_PROGRAM_NAME = "Service Creator"
 MAIN_PROGRAM_COMMAND = "service_creator"
 MAIN_PROGRAM_DESCRIPTION = "Create custom services for your Debian-based systems (such as Ubuntu) with this tool | " \
                            "Automate the process and make everything faster and easier than ever"
-MAIN_PROGRAM_VERSION = "0.9b"
+MAIN_PROGRAM_VERSION = "0.93b"
 MAIN_PROGRAM_EPILOG = MAIN_PROGRAM_NAME + " | v" + MAIN_PROGRAM_VERSION
 MAIN_PROGRAM_USAGE = Colors.HEADER + MAIN_PROGRAM_NAME + Colors.END_COLOR + "\nUse this tool for creating custom " \
                                                                             "init.d scripts that will run" \
@@ -37,11 +37,11 @@ P_USR_LOCAL_BIN_DIR = "/usr/local/bin/"
 # Inputs
 I_PATH_NOT_FOUND = Colors.BOLD + "Please, provide a complete path where the script will be stored: " + Colors.END_COLOR
 I_SERVICE_NAME = Colors.OK_BLUE + "Which name will have the service? (Notice that special characters such as \"\\n\" " \
-                                  "or whitespaces \" \" will be deleted): " + Colors.END_COLOR
-I_CORRECT_SERVICE_NAME = "The name you chose is \"{}\". Is that correct?"
+                                  "or whitespaces \" \" will be deleted): " + Colors.END_COLOR + Colors.OK_GREEN
+I_CORRECT_SERVICE_NAME = Colors.END_COLOR + "The name you chose is \"{}\". Is that correct?"
 I_USERNAME = Colors.OK_BLUE + "Now, tell me with which user permissions should the scrip be executed (this field is a" \
-                              " username): " + Colors.END_COLOR
-I_CORRECT_USERNAME = "The username you chose is \"{}\". Is that correct?"
+                              " username): " + Colors.END_COLOR + Colors.OK_GREEN
+I_CORRECT_USERNAME = Colors.END_COLOR + "The username you chose is \"{}\". Is that correct?"
 I_READ_COMMAND_FROM_FILE = Colors.OK_BLUE + "It is almost completed. Now you must tell me which command will the " \
                                             "service execute." + Colors.END_COLOR + Colors.BOLD + \
                            " Would you like to load it from file?" + Colors.END_COLOR

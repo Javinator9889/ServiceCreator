@@ -135,11 +135,11 @@ def generateNewServiceFileFromTemplate(service_name: str, username: str, command
     web_template = requests.get(OP_TEMPLATE_FILE)
     template = web_template.text
 
-    template.replace("<NAME>", service_name)
-    template.replace("<SHORT-DESCRIPTION>", short_description)
-    template.replace("<DESCRIPTION>", long_description)
-    template.replace("<COMMAND>", command)
-    template.replace("<USERNAME>", username)
+    template = template.replace("<NAME>", service_name)
+    template = template.replace("<SHORT-DESCRIPTION>", short_description)
+    template = template.replace("<DESCRIPTION>", long_description)
+    template = template.replace("<COMMAND>", command)
+    template = template.replace("<USERNAME>", username)
 
     with open(P_ETC_INIT_DIR + service_name, 'w') as new_script_file:
         new_script_file.write(template)

@@ -9,17 +9,6 @@ from .values.Constants import (MAIN_PROGRAM_NAME,
                                MAIN_PROGRAM_EPILOG,
                                MAIN_PROGRAM_USAGE,
                                MAIN_PROGRAM_URL,
-                               P_ETC_INIT_DIR,
-                               I_PATH_NOT_FOUND,
-                               I_SERVICE_NAME,
-                               I_CORRECT_SERVICE_NAME,
-                               I_USERNAME,
-                               I_CORRECT_USERNAME,
-                               I_READ_COMMAND_FROM_FILE,
-                               I_FILENAME,
-                               I_COMMAND,
-                               I_SHORT_DESCRIPTION,
-                               I_LONG_DESCRIPTION,
                                ANIM_CREATING_LOG_FILE,
                                ANIM_GENERATING_FILE,
                                ANIM_APPLYING_NEW_CONFIGURATION,
@@ -28,11 +17,6 @@ from .utils import (isRunningLinux,
                     isUserAdmin,
                     isNewVersionAvailable,
                     shouldContinueWith,
-                    cleanString,
-                    isAnExistingUser,
-                    makeBashScript,
-                    ifCommandExists,
-                    getCommandFullPath,
                     generateLogFile,
                     generateNewServiceFileFromTemplate,
                     applyConfigurationIsSuccessful,
@@ -42,10 +26,163 @@ from .output import OutputColors as Colors
 from .output import cprint, Animation
 
 
+def check_init_d_folder():
+    # type: () -> str
+    from .values.Constants import P_ETC_INIT_DIR, I_PATH_NOT_FOUND
+
+    service_folder = P_ETC_INIT_DIR
+    while not os.path.exists(service_folder):
+        cprint("It seems that \"" + service_folder + "\" does not exists",
+               Colors.FAIL)
+        partial_dir = input(I_PATH_NOT_FOUND)
+        if not partial_dir.endswith('/'):
+            service_folder = partial_dir + '/'
+        else:
+            service_folder = partial_dir
+    return service_folder
+
+
+def ask_for_service_name(service_folder: str):
+    # type: () -> str
+    from .values.Constants import I_SERVICE_NAME, I_CORRECT_SERVICE_NAME
+    from .utils import cleanString
+
+    service_name = ""
+    is_valid_service_name = False
+    while not is_valid_service_name:
+        service_name = input(I_SERVICE_NAME)
+        if (service_name == "") or (service_name is None):
+            cprint("Empty values are not allowed. Please, provide a proper service name", Colors.FAIL)
+            is_valid_service_name = False
+        elif os.path.exists(service_folder + service_name):
+            cprint("The service name you provided already exists. Please, choose another one",
+                   Colors.FAIL)
+            is_valid_service_name = False
+        else:
+            if shouldContinueWith(I_CORRECT_SERVICE_NAME.format(service_name)):
+                service_name = cleanString(service_name)
+                is_valid_service_name = True
+            else:
+                cprint("Please, give me the new name you want the service to have", Colors.UNDERLINE)
+                is_valid_service_name = False
+    return service_name
+
+
+def ask_for_username_permissions():
+    # type: () -> str
+    from .values.Constants import I_USERNAME, I_CORRECT_USERNAME
+    from .utils import isAnExistingUser
+
+    username = ""
+    is_valid_user = False
+    while not is_valid_user:
+        username = input(I_USERNAME)
+        if (username == "") or (username is None):
+            cprint("Empty values are not allowed. Please, provide a proper username", Colors.FAIL)
+            is_valid_user = False
+        elif isAnExistingUser(username):
+            if shouldContinueWith(I_CORRECT_USERNAME.format(username)):
+                is_valid_user = True
+            else:
+                cprint("Please, give me the new username you want the service to be run with",
+                       Colors.UNDERLINE)
+                is_valid_user = False
+        else:
+            cprint("The username you provide does not exists. Please, add a proper username",
+                   Colors.FAIL)
+            is_valid_user = False
+    return username
+
+
+def request_command_for_service():
+    # type: () -> str
+    from .values.Constants import I_READ_COMMAND_FROM_FILE, I_FILENAME, I_COMMAND
+    from .utils import makeBashScript, ifCommandExists, getCommandFullPath
+
+    command = ""
+    if shouldContinueWith(I_READ_COMMAND_FROM_FILE):
+        filename = ""
+        is_valid_filename = False
+        while not is_valid_filename:
+            filename = input(I_FILENAME)
+            if (filename == "") or (filename is None):
+                cprint("Empty values are not allowed. Please, provide a proper filename",
+                       Colors.FAIL)
+                is_valid_filename = False
+            elif not os.path.exists(filename):
+                cprint("We have not found the file. Please, enter the full path for the file",
+                       Colors.FAIL)
+                is_valid_filename = False
+            else:
+                is_valid_filename = True
+        is_valid_script_filename = False
+        new_name = filename
+        while not is_valid_script_filename:
+            if not makeBashScript(filename, new_name):
+                new_name = input(Colors.FAIL + "We found an error creating the executable file. "
+                                               "Please, enter a new name: " + Colors.END_COLOR)
+                is_valid_script_filename = False
+            else:
+                is_valid_script_filename = True
+                command = "/usr/local/bin/" + new_name
+    else:
+        is_valid_command = False
+        while not is_valid_command:
+            command = input(I_COMMAND)
+            if (command == "") or (command is None):
+                cprint("Empty values are not allowed. Please, put an entire command",
+                       Colors.FAIL)
+                is_valid_command = False
+            elif ifCommandExists(command):
+                is_valid_command = True
+                command = getCommandFullPath(command)
+            else:
+                cprint("The specified command does not exist.", Colors.FAIL)
+                is_valid_command = False
+    return command
+
+
+def request_short_description():
+    # type: () -> str
+    from .values.Constants import I_SHORT_DESCRIPTION
+
+    short_description = ""
+    is_valid_short_description = False
+    while not is_valid_short_description:
+        short_description = input(I_SHORT_DESCRIPTION)
+        if (short_description == "") or (short_description is None):
+            cprint("Empty values are not allowed. Please, enter a short description", Colors.FAIL)
+            is_valid_short_description = False
+        else:
+            is_valid_short_description = True
+    return short_description
+
+
+def request_long_description(short_description: str):
+    # type: () -> str
+    from .values.Constants import I_LONG_DESCRIPTION
+
+    long_description = ""
+    is_valid_description = False
+    while not is_valid_description:
+        long_description = input(I_LONG_DESCRIPTION)
+        if (long_description == "") or (long_description is None):
+            long_description = short_description
+            is_valid_description = True
+        else:
+            is_valid_description = True
+    return long_description
+
+
 def application(args: argparse.Namespace):
     is_usage_chosen = args.usage
+    is_version_chosen = args.version
     if is_usage_chosen:
         print(MAIN_PROGRAM_USAGE)
+        exit(2)
+    elif is_version_chosen:
+        print(Colors.BOLD + MAIN_PROGRAM_VERSION + Colors.END_COLOR + " | Check more info: " + Colors.UNDERLINE
+              + MAIN_PROGRAM_URL + Colors.END_COLOR)
         exit(2)
     else:
         animator = Animation(0.1)
@@ -57,109 +194,14 @@ def application(args: argparse.Namespace):
             if isRunningLinux():
                 if isUserAdmin():
                     cprint("Script loaded. Let's start creating your new service\n")
-                    service_folder = P_ETC_INIT_DIR
-                    while not os.path.exists(service_folder):
-                        cprint("It seems that \"" + service_folder + "\" does not exists",
-                               Colors.FAIL)
-                        partial_dir = input(I_PATH_NOT_FOUND)
-                        if not partial_dir.endswith('/'):
-                            service_folder = partial_dir + '/'
-                        else:
-                            service_folder = partial_dir
-                    service_name = ""
-                    is_valid_service_name = False
-                    while not is_valid_service_name:
-                        service_name = input(I_SERVICE_NAME)
-                        if (service_name == "") or (service_name is None):
-                            cprint("Empty values are not allowed. Please, provide a proper service name", Colors.FAIL)
-                            is_valid_service_name = False
-                        elif os.path.exists(service_folder + service_name):
-                            cprint("The service name you provided already exists. Please, choose another one",
-                                   Colors.FAIL)
-                            is_valid_service_name = False
-                        else:
-                            if shouldContinueWith(I_CORRECT_SERVICE_NAME.format(service_name)):
-                                service_name = cleanString(service_name)
-                                is_valid_service_name = True
-                            else:
-                                cprint("Please, give me the new name you want the service to have", Colors.UNDERLINE)
-                                is_valid_service_name = False
-                    username = ""
-                    is_valid_user = False
-                    while not is_valid_user:
-                        username = input(I_USERNAME)
-                        if (username == "") or (username is None):
-                            cprint("Empty values are not allowed. Please, provide a proper username", Colors.FAIL)
-                            is_valid_user = False
-                        elif isAnExistingUser(username):
-                            if shouldContinueWith(I_CORRECT_USERNAME.format(username)):
-                                is_valid_user = True
-                            else:
-                                cprint("Please, give me the new username you want the service to be run with",
-                                       Colors.UNDERLINE)
-                                is_valid_user = False
-                        else:
-                            cprint("The username you provide does not exists. Please, add a proper username",
-                                   Colors.FAIL)
-                            is_valid_user = False
-                    command = ""
-                    if shouldContinueWith(I_READ_COMMAND_FROM_FILE):
-                        filename = ""
-                        is_valid_filename = False
-                        while not is_valid_filename:
-                            filename = input(I_FILENAME)
-                            if (filename == "") or (filename is None):
-                                cprint("Empty values are not allowed. Please, provide a proper filename",
-                                       Colors.FAIL)
-                                is_valid_filename = False
-                            elif not os.path.exists(filename):
-                                cprint("We have not found the file. Please, enter the full path for the file",
-                                       Colors.FAIL)
-                                is_valid_filename = False
-                            else:
-                                is_valid_filename = True
-                        is_valid_script_filename = False
-                        new_name = filename
-                        while not is_valid_script_filename:
-                            if not makeBashScript(filename, new_name):
-                                new_name = input(Colors.FAIL + "We found an error creating the executable file. "
-                                                               "Please, enter a new name: " + Colors.END_COLOR)
-                                is_valid_script_filename = False
-                            else:
-                                is_valid_script_filename = True
-                                command = "/usr/local/bin/" + new_name
-                    else:
-                        is_valid_command = False
-                        while not is_valid_command:
-                            command = input(I_COMMAND)
-                            if (command == "") or (command is None):
-                                cprint("Empty values are not allowed. Please, put an entire command",
-                                       Colors.FAIL)
-                                is_valid_command = False
-                            elif ifCommandExists(command):
-                                is_valid_command = True
-                                command = getCommandFullPath(command)
-                            else:
-                                cprint("The specified command does not exist.", Colors.FAIL)
-                                is_valid_command = False
-                    short_description = ""
-                    is_valid_short_description = False
-                    while not is_valid_short_description:
-                        short_description = input(I_SHORT_DESCRIPTION)
-                        if (short_description == "") or (short_description is None):
-                            cprint("Empty values are not allowed. Please, enter a short description", Colors.FAIL)
-                            is_valid_short_description = False
-                        else:
-                            is_valid_short_description = True
-                    long_description = ""
-                    is_valid_description = False
-                    while not is_valid_description:
-                        long_description = input(I_LONG_DESCRIPTION)
-                        if (long_description == "") or (long_description is None):
-                            long_description = short_description
-                            is_valid_description = True
-                        else:
-                            is_valid_description = True
+
+                    service_folder = check_init_d_folder()
+                    service_name = ask_for_service_name(service_folder)
+                    username = ask_for_username_permissions()
+                    command = request_command_for_service()
+                    short_description = request_short_description()
+                    long_description = request_long_description(short_description)
+
                     animator.animate(ANIM_CREATING_LOG_FILE, None, Colors.OK_BLUE)
                     generateLogFile(service_name, username)
                     animator.stop()
@@ -214,6 +256,10 @@ def main():
                                   "--usage",
                                   action="store_true",
                                   help="Show full usage for this program")
+    argument_creator.add_argument("-v",
+                                  "--version",
+                                  action="store_true",
+                                  help="Show program version")
     args = argument_creator.parse_args()
     application(args)
 
