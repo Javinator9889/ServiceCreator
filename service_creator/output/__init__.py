@@ -70,7 +70,8 @@ class Animation:
         if self.__force_stop_event.is_set():
             print(text + " " + OutputColors.FAIL + "[FAIL]" + OutputColors.END_COLOR, end="\r")
         else:
-            print(text + " " + OutputColors.OK_GREEN + text_animation_end + OutputColors.END_COLOR, end="\r")
+            print(text + " " + OutputColors.OK_GREEN + "[" + text_animation_end + "]" + OutputColors.END_COLOR,
+                  end="\r")
         print("\n")
 
     def stop(self):
