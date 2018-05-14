@@ -78,18 +78,18 @@ def makeBashScript(filename: str, new_sh_file: str):
     with open(filename, 'r') as script:
         script_content = script.readlines()
     if (script_content[0] != OP_BASH_HEADER) or (script_content[0] != OP_SH_HEADER):
-        script_content.insert(0, OP_SH_HEADER + "\n")
-    new_sh_file = os.path.basename(new_sh_file)
+        script_content.insert(0, OP_SH_HEADER + "\n\n")
+    usr_exec_file = os.path.basename(new_sh_file)
     from pprint import pprint
     pprint(script_content)
-    pprint("Path: " + P_USR_LOCAL_BIN_DIR + new_sh_file)
-    if os.path.exists(P_USR_LOCAL_BIN_DIR + new_sh_file):
+    pprint("Path: " + P_USR_LOCAL_BIN_DIR + usr_exec_file)
+    if os.path.exists(P_USR_LOCAL_BIN_DIR + usr_exec_file):
         return False
     else:
-        with open(P_USR_LOCAL_BIN_DIR + new_sh_file, 'w') as sh_file:
+        with open(P_USR_LOCAL_BIN_DIR + usr_exec_file, 'w') as sh_file:
             for script_line in script_content:
                 sh_file.write(script_line)
-        os.chmod(P_USR_LOCAL_BIN_DIR + new_sh_file, 0o755)
+        os.chmod(P_USR_LOCAL_BIN_DIR + usr_exec_file, 0o755)
         return True
 
 
