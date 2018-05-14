@@ -124,9 +124,10 @@ def getUsernameGID(username: str):
 def generateLogFile(service_name: str, username: str):
     import os
 
-    new_file = open("/var/log/" + service_name, 'w')
+    filename = "/var/log/" + service_name + ".log"
+    new_file = open(filename, 'w')
     new_file.close()
-    os.chown("/var/log/" + service_name, getUsernameUID(username), getUsernameGID(username))
+    os.chown(filename, getUsernameUID(username), getUsernameGID(username))
 
 
 def generateNewServiceFileFromTemplate(service_name: str, username: str, command: str, short_description: str,
