@@ -79,7 +79,7 @@ def makeBashScript(filename: str, new_sh_file: str):
         script_content = script.readlines()
     if (script_content[0] != OP_BASH_HEADER) or (script_content[0] != OP_SH_HEADER):
         script_content.insert(0, OP_SH_HEADER)
-    new_sh_file = os.path.basename(str)
+    new_sh_file = os.path.basename(new_sh_file)
     from pprint import pprint
     pprint(script_content)
     pprint("Path: " + P_USR_LOCAL_BIN_DIR + new_sh_file)
