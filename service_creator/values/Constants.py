@@ -27,7 +27,7 @@ MAIN_PROGRAM_URL = "https://github.com/Javinator9889/ServiceCreator"
 # Other params
 OP_VERSION_RAW = "https://github.com/Javinator9889/ServiceCreator/raw/development/version.json"
 OP_BASH_HEADER = "#!/bin/bash"
-OP_SH_HEADER = "#!/bin/bash"
+OP_SH_HEADER = "#!/bin/sh"
 OP_TEMPLATE_FILE = "https://raw.githubusercontent.com/Javinator9889/ServiceCreator/development/template.sh"
 
 # Paths

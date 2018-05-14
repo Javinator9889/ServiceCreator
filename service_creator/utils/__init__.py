@@ -78,7 +78,7 @@ def makeBashScript(filename: str, new_sh_file: str):
     with open(filename, 'r') as script:
         script_content = script.readlines()
     if (script_content[0] != OP_BASH_HEADER) or (script_content[0] != OP_SH_HEADER):
-        script_content.insert(0, OP_SH_HEADER)
+        script_content.insert(0, OP_SH_HEADER + "\n")
     new_sh_file = os.path.basename(new_sh_file)
     from pprint import pprint
     pprint(script_content)
