@@ -121,3 +121,5 @@ case "$1" in
   *)
     echo "Usage: $0 {start|stop|status|restart|uninstall|disable|enable}"
 esac
+
+# vim: syntax=sh ts=4 sw=4 sts=4 sr noet
