@@ -11,6 +11,7 @@
 
 SCRIPT="<COMMAND>"
 RUNAS=<USERNAME>
+NAME=<NAME>
 
 PIDFILE=/var/run/<NAME>.pid
 LOGFILE=/var/log/<NAME>.log

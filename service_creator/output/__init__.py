@@ -41,7 +41,7 @@ class Animation:
         animation_thread.setDaemon(True)
         animation_thread.start()
 
-    def __animation(self, text, text_animation_end: str = None, color: str = None):
+    def __animation(self, text, text_animation_end: str = None, color=None):
         import time
         from service_creator.values import OutputColors
 
@@ -53,10 +53,20 @@ class Animation:
             color = ""
         else:
             end_color = OutputColors.END_COLOR"""
+        if color is None:
+            end_color = ""
+            color = ""
+        else:
+            end_color = OutputColors.END_COLOR
         while not self.__stop_event.is_set():
-            print(text + " " + "[" + self.__animation_values[idx % len(self.__animation_values)] + "]", end="\r")
+            print(text + " " + color + "[" + self.__animation_values[idx % len(self.__animation_values)] + "]"
+                  + end_color, end="\r")
             idx += 1
             time.sleep(self.__duration)
+        """while not self.__stop_event.is_set():
+            print(text + " " + "[" + self.__animation_values[idx % len(self.__animation_values)] + "]", end="\r")
+            idx += 1
+            time.sleep(self.__duration)"""
         if self.__force_stop_event.is_set():
             print(text + " " + OutputColors.FAIL + "[FAIL]" + OutputColors.END_COLOR, end="\r")
         else:
