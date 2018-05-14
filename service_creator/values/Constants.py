@@ -45,7 +45,7 @@ I_CORRECT_USERNAME = Colors.END_COLOR + "The username you chose is \"{}\". Is th
 I_READ_COMMAND_FROM_FILE = Colors.OK_BLUE + "It is almost completed. Now you must tell me which command will the " \
                                             "service execute." + Colors.END_COLOR + Colors.BOLD + \
                            " Would you like to load it from file?" + Colors.END_COLOR
-I_FILENAME = Colors.UNDERLINE + "Please, give me the complete filename: " + Colors.END_COLOR
+I_FILENAME = Colors.UNDERLINE + "Please, give me the complete filename:" + Colors.END_COLOR + " "
 I_COMMAND = Colors.OK_BLUE + "Type the command your service must execute on boot (be careful with new lines): " \
             + Colors.END_COLOR
 I_SHORT_DESCRIPTION = Colors.OK_BLUE + "Enter a short description for your service: " + Colors.END_COLOR
