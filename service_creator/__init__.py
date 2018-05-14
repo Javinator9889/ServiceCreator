@@ -226,8 +226,9 @@ def application(args: argparse.Namespace):
                         if startServiceIsSuccessful(service_name):
                             animator.stop()
                             time.sleep(1)
-                            cprint("All operations complete. Now you should be able to use all options with \"service"
-                                   + service_name + "\" command. You can uninstall just adding \"uninstall\" to the"
+                            cprint("All operations complete. Now you should be able to use all options with \"service "
+                                   + service_name + " {options}\" command (see \"service_creator -u\" for more info). "
+                                                    "You can uninstall just adding \"uninstall\" to the"
                                                     " latest command.", Colors.BOLD)
                             exit(0)
                         else:
