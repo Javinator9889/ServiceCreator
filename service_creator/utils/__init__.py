@@ -157,6 +157,8 @@ def applyConfigurationIsSuccessful(service_name: str):
 
     command = C_UPDATE_RC.format(service_name)
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(process.stdout.read().decode("utf-8"))
+    print(process.stderr.read().decode("utf-8"))
     return_code = process.returncode
     return return_code == 0
 
