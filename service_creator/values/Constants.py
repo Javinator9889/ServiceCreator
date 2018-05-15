@@ -56,7 +56,7 @@ I_LONG_DESCRIPTION = Colors.OK_BLUE + "Enter a long description for your service
 
 # Animation texts
 ANIM_GENERATING_FILE = "Generating new script file..."
-ANIM_CREATING_LOG_FILE = "Creating new log file for the created script..."
+ANIM_CREATING_FOLDERS = "Creating required folders for the created script..."
 ANIM_APPLYING_NEW_CONFIGURATION = "Copying new file and updating boot configuration..."
 ANIM_STARTING_SERVICE = "Starting new service..."
 

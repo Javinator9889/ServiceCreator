@@ -9,7 +9,7 @@ from .values.Constants import (MAIN_PROGRAM_NAME,
                                MAIN_PROGRAM_EPILOG,
                                MAIN_PROGRAM_USAGE,
                                MAIN_PROGRAM_URL,
-                               ANIM_CREATING_LOG_FILE,
+                               ANIM_CREATING_FOLDERS,
                                ANIM_GENERATING_FILE,
                                ANIM_APPLYING_NEW_CONFIGURATION,
                                ANIM_STARTING_SERVICE)
@@ -17,7 +17,7 @@ from .utils import (isRunningLinux,
                     isUserAdmin,
                     isNewVersionAvailable,
                     shouldContinueWith,
-                    generateLogFile,
+                    generateRequiredFolders,
                     generateNewServiceFileFromTemplate,
                     applyConfigurationIsSuccessful,
                     startServiceIsSuccessful)
@@ -75,7 +75,7 @@ def ask_for_username_permissions():
     from .values.Constants import I_USERNAME, I_CORRECT_USERNAME
     from .utils import isAnExistingUser
 
-    # username = ""
+    username = ""
     is_valid_user = False
     while not is_valid_user:
         username = input(I_USERNAME)
@@ -102,7 +102,6 @@ def request_command_for_service(service_name: str):
     from .values.Constants import I_READ_COMMAND_FROM_FILE, I_FILENAME, I_COMMAND, I_FILENAME_DESC
     from .utils import makeBashScript, ifCommandExists, getCommandFullPath
 
-    # command = ""
     if shouldContinueWith(I_READ_COMMAND_FROM_FILE):
         filename = ""
         print(I_FILENAME_DESC)
@@ -158,7 +157,7 @@ def request_short_description():
     # type: () -> str
     from .values.Constants import I_SHORT_DESCRIPTION
 
-    # short_description = ""
+    short_description = ""
     is_valid_short_description = False
     while not is_valid_short_description:
         short_description = input(I_SHORT_DESCRIPTION)
@@ -174,7 +173,7 @@ def request_long_description(short_description: str):
     # type: () -> str
     from .values.Constants import I_LONG_DESCRIPTION
 
-    # long_description = ""
+    long_description = ""
     is_valid_description = False
     while not is_valid_description:
         long_description = input(I_LONG_DESCRIPTION)
@@ -220,8 +219,8 @@ def application(args: argparse.Namespace):
                     long_description = request_long_description(short_description)
                     print("Long description: " + long_description)
 
-                    animator.animate(ANIM_CREATING_LOG_FILE, None, Colors.OK_BLUE)
-                    generateLogFile(service_name, username)
+                    animator.animate(ANIM_CREATING_FOLDERS, None, Colors.OK_BLUE)
+                    generateRequiredFolders(service_name, username)
                     animator.stop()
                     time.sleep(1)
                     animator.animate(ANIM_GENERATING_FILE, None, Colors.OK_BLUE)

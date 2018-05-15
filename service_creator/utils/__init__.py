@@ -126,14 +126,14 @@ def getUsernameGID(username: str):
     return pwd.getpwnam(username).pw_gid
 
 
-def generateLogFile(service_name: str, username: str):
+def generateRequiredFolders(service_name: str, username: str):
     import os
 
-    filename = "/var/log/" + service_name  # + ".log"
-    os.mkdir(filename)
-    # new_file = open(filename, 'w')
-    # new_file.close()
-    os.chown(filename, getUsernameUID(username), getUsernameGID(username))
+    log_filename = "/var/log/" + service_name
+    os.mkdir(log_filename)
+    os.chown(log_filename, getUsernameUID(username), getUsernameGID(username))
+    lib_filename = "/var/lib/" + service_name
+    os.mkdir(lib_filename)
 
 
 def generateNewServiceFileFromTemplate(service_name: str, username: str, command: str, short_description: str,
