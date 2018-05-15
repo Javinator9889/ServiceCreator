@@ -248,7 +248,7 @@ def application(args: argparse.Namespace):
         print(MAIN_PROGRAM_USAGE)
         exit(2)
     elif is_version_chosen:
-        print(Colors.BOLD + MAIN_PROGRAM_VERSION + Colors.END_COLOR + " | Check more info: " + Colors.UNDERLINE
+        print(Colors.BOLD + "v" + MAIN_PROGRAM_VERSION + Colors.END_COLOR + " | Check more info: " + Colors.UNDERLINE
               + MAIN_PROGRAM_URL + Colors.END_COLOR)
         exit(2)
     else:
