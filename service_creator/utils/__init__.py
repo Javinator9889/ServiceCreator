@@ -126,9 +126,10 @@ def getUsernameGID(username: str):
     return pwd.getpwnam(username).pw_gid
 
 
-def generateRequiredFolders(service_name: str, username: str):
+def generateRequiredFolders(service_name: str, username: str, animator):
     # type: () -> str
     import os
+    import time
     from service_creator.output import OutputColors as Colors
 
     try:
@@ -139,6 +140,8 @@ def generateRequiredFolders(service_name: str, username: str):
         os.mkdir(lib_filename)
         return service_name
     except FileExistsError:
+        animator.force_stop()
+        time.sleep(0.5)
         new_name = ""
         are_valid_directories = False
         while not are_valid_directories:

@@ -237,7 +237,7 @@ def application(args: argparse.Namespace):
                     print("Long description: " + long_description)
 
                     animator.animate(ANIM_CREATING_FOLDERS, None, Colors.OK_BLUE)
-                    lib_log_filename = generateRequiredFolders(service_name, username)
+                    lib_log_filename = generateRequiredFolders(service_name, username, animator)
                     animator.stop()
                     time.sleep(1)
                     animator.animate(ANIM_GENERATING_FILE, None, Colors.OK_BLUE)
