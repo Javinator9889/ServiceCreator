@@ -177,6 +177,7 @@ def generateNewServiceFileFromTemplate(service_name: str, username: str, command
     template = web_template.text
 
     template = template.replace("<NAME>", service_name)
+    template = template.replace("<LIB-LOG_FILENAME>", lib_log_filename)
     template = template.replace("<SHORT-DESCRIPTION>", short_description)
     template = template.replace("<DESCRIPTION>", long_description)
     template = template.replace("<COMMAND>", command_with_no_args)
