@@ -104,7 +104,7 @@ def getCommandFullPath(command: str):
     # type: () -> str
     from shutil import which
 
-    return which(command)
+    return which(command.split()[0])
 
 
 def getUsernameUID(username: str):

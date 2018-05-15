@@ -137,7 +137,7 @@ def request_command_for_service(service_name: str):
                 command = "/usr/local/bin/" + new_name
         return command
     else:
-        command = ""
+        final_command = ""
         is_valid_command = False
         while not is_valid_command:
             command = input(I_COMMAND)
@@ -147,11 +147,11 @@ def request_command_for_service(service_name: str):
                 is_valid_command = False
             elif ifCommandExists(command):
                 is_valid_command = True
-                command = getCommandFullPath(command)
+                final_command = getCommandFullPath(command)
             else:
                 cprint("The specified command does not exist.", Colors.FAIL)
                 is_valid_command = False
-        return command
+        return final_command
 
 
 def request_short_description():
