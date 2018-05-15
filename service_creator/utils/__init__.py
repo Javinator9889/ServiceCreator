@@ -145,9 +145,10 @@ def generateRequiredFolders(service_name: str, username: str, animator):
         new_name = ""
         are_valid_directories = False
         while not are_valid_directories:
-            new_name = input(Colors.FAIL + "There was an error while trying to create a dir for the log file."
-                                           " Please, enter a custom name instead of \"" + service_name
-                             + Colors.END_COLOR + "\": ")
+            new_name = cleanString(
+                input(Colors.FAIL + "There was an error while trying to create a dir for the log file."
+                                    " Please, enter a custom name instead of \"" + service_name
+                      + Colors.END_COLOR + "\": "))
             try:
                 log_filename = "/var/log/" + new_name
                 os.mkdir(log_filename)
