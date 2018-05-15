@@ -125,20 +125,20 @@ uninstall() {
 }
 
 disable() {
-    printf "Disabling service from boot..."
-    printf "This will cause your service not running on boot and stopping it right now"
+    printf "Disabling service from boot...\n"
+    printf "This will cause your service not running on boot and stopping it right now\n"
     do_stop
     update-rc.d -f "$NAME" remove
-    printf "Service correctly disabled"
+    printf "Service correctly disabled\n"
 }
 
 enable_again() {
-    printf "Enabling service..."
-    printf "This will cause your service running on boot and restarting it right now"
+    printf "Enabling service...\n"
+    printf "This will cause your service running on boot and restarting it right now\n"
     do_stop
     do_start
     update-rc.d "$NAME" defaults
-    printf "Service correctly enabled"
+    printf "Service correctly enabled\n"
 }
 
 case "$1" in
