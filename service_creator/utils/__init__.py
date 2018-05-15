@@ -38,7 +38,7 @@ def cleanString(input_string: str):
     # type: () -> str
     import re
 
-    return re.sub("[^_-a-zA-Z0-9]", '', input_string)
+    return re.sub("[^-a-zA-Z0-9_]", '', input_string)
 
 
 def shouldContinueWith(text: str):
