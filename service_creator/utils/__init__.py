@@ -165,10 +165,10 @@ def generateRequiredFolders(service_name: str, username: str, animator):
 
 
 def generateNewServiceFileFromTemplate(service_name: str, username: str, command: str, short_description: str,
-                                       long_description: str, lib_log_filename: str):
+                                       long_description: str, lib_log_filename: str, export_path: str):
     import requests
     import os
-    from service_creator.values.Constants import OP_TEMPLATE_FILE, P_ETC_INIT_DIR
+    from service_creator.values.Constants import OP_TEMPLATE_FILE
 
     from pprint import pprint
     command_args_list = command.split()
@@ -191,9 +191,9 @@ def generateNewServiceFileFromTemplate(service_name: str, username: str, command
     template = template.replace("<ARGS>", command_args)
     template = template.replace("<USERNAME>", username)
 
-    with open(P_ETC_INIT_DIR + service_name, 'w') as new_script_file:
+    with open(export_path, 'w') as new_script_file:
         new_script_file.write(template)
-    os.chmod(P_ETC_INIT_DIR + service_name, 0o755)
+    os.chmod(export_path, 0o755)
 
 
 def applyConfigurationIsSuccessful(service_name: str):

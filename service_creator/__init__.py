@@ -186,6 +186,44 @@ def request_long_description(short_description: str):
     return long_description
 
 
+def load_command_from_file(filename: str, service_name: str):
+    from .values.Constants import I_FILENAME
+    from .utils import makeBashScript
+
+    is_valid_filename = False
+    while not is_valid_filename:
+        if (filename == "") or (filename is None):
+            cprint("Empty values are not allowed. Please, provide a proper filename",
+                   Colors.FAIL)
+            is_valid_filename = False
+            filename = input(I_FILENAME)
+        elif not os.path.exists(filename):
+            cprint("We have not found the file. Please, enter the full path for the file",
+                   Colors.FAIL)
+            is_valid_filename = False
+            filename = input(I_FILENAME)
+        elif os.path.isdir(filename):
+            cprint("The provided path is a directory. Please, use a full path with the filename",
+                   Colors.FAIL)
+            is_valid_filename = False
+            filename = input(I_FILENAME)
+        else:
+            is_valid_filename = True
+    is_valid_script_filename = False
+
+    new_name = service_name
+    command = ""
+    while not is_valid_script_filename:
+        if not makeBashScript(filename, new_name):
+            new_name = input(Colors.FAIL + "We found an error creating the executable file. "
+                                           "Please, enter a new name: " + Colors.END_COLOR)
+            is_valid_script_filename = False
+        else:
+            is_valid_script_filename = True
+            command = "/usr/local/bin/" + new_name
+    return command
+
+
 class AutoCompletion:
     import glob
 
@@ -204,6 +242,8 @@ class AutoCompletion:
 def application(args: argparse.Namespace):
     is_usage_chosen = args.usage
     is_version_chosen = args.version
+    export_file = args.export
+    load_file = args.file
     if is_usage_chosen:
         print(MAIN_PROGRAM_USAGE)
         exit(2)
@@ -223,13 +263,19 @@ def application(args: argparse.Namespace):
                 if isUserAdmin():
                     cprint("Script loaded. Let's start creating your new service\n")
 
-                    service_folder = check_init_d_folder()
+                    if export_file == "":
+                        service_folder = check_init_d_folder()
+                    else:
+                        service_folder = export_file
                     print("Service folder: " + service_folder)
                     service_name = ask_for_service_name(service_folder)
                     print("Service name: " + service_name)
                     username = ask_for_username_permissions()
                     print("Username: " + username)
-                    command = request_command_for_service(service_name)
+                    if load_file == "":
+                        command = request_command_for_service(service_name)
+                    else:
+                        command = load_command_from_file(load_file, service_name)
                     print("Command: " + command)
                     short_description = request_short_description()
                     print("Short description: " + short_description)
@@ -240,36 +286,55 @@ def application(args: argparse.Namespace):
                     lib_log_filename = generateRequiredFolders(service_name, username, animator)
                     animator.stop()
                     time.sleep(1)
-                    animator.animate(ANIM_GENERATING_FILE, None, Colors.OK_BLUE)
-                    generateNewServiceFileFromTemplate(service_name, username, command, short_description,
-                                                       long_description, lib_log_filename)
-                    animator.stop()
-                    time.sleep(1)
-                    animator.animate(ANIM_APPLYING_NEW_CONFIGURATION, None, Colors.OK_BLUE)
-                    if applyConfigurationIsSuccessful(service_name):
+                    if export_file == "":
+                        animator.animate(ANIM_GENERATING_FILE, None, Colors.OK_BLUE)
+                        generateNewServiceFileFromTemplate(service_name, username, command, short_description,
+                                                           long_description, lib_log_filename, service_folder)
                         animator.stop()
                         time.sleep(1)
-                        animator.animate(ANIM_STARTING_SERVICE, None, Colors.OK_BLUE)
-                        if startServiceIsSuccessful(service_name):
+                        animator.animate(ANIM_APPLYING_NEW_CONFIGURATION, None, Colors.OK_BLUE)
+                        if applyConfigurationIsSuccessful(service_name):
                             animator.stop()
                             time.sleep(1)
-                            cprint("All operations complete. Now you should be able to use all options with \"service "
-                                   + service_name + " {options}\" command (see \"service_creator -u\" for more info). "
-                                                    "You can uninstall just adding \"uninstall\" to the"
-                                                    " latest command.", Colors.BOLD)
-                            exit(0)
+                            animator.animate(ANIM_STARTING_SERVICE, None, Colors.OK_BLUE)
+                            if startServiceIsSuccessful(service_name):
+                                animator.stop()
+                                time.sleep(1)
+                                cprint(
+                                    "All operations complete. Now you should be able to use all options with \"service "
+                                    + service_name + " {options}\" command (see \"service_creator -u\" for more info). "
+                                                     "You can uninstall just adding \"uninstall\" to the"
+                                                     " latest command.", Colors.BOLD)
+                                exit(0)
+                            else:
+                                animator.force_stop()
+                                time.sleep(1)
+                                cprint("There was an error while trying to start your new service. Please, check logs",
+                                       Colors.FAIL)
+                                exit(-1)
                         else:
                             animator.force_stop()
                             time.sleep(1)
-                            cprint("There was an error while trying to start your new service. Please, check logs",
-                                   Colors.FAIL)
-                            exit(-1)
+                            cprint("There was an error while trying to register your new service at boot. Please, check"
+                                   " logs", Colors.FAIL)
+                            exit(-2)
                     else:
-                        animator.force_stop()
-                        time.sleep(1)
-                        cprint("There was an error while trying to register your new service at boot. Please, check"
-                               " logs", Colors.FAIL)
-                        exit(-2)
+                        is_valid_export_file = False
+                        while not is_valid_export_file:
+                            if not os.path.exists(os.path.dirname(export_file)):
+                                cprint("The export path you provided does not exists", Colors.FAIL)
+                                is_valid_export_file = False
+                                export_file = input("Please, give me another path and file: ")
+                            elif os.path.isdir(export_file):
+                                cprint("The export file you provided is a directory", Colors.FAIL)
+                                is_valid_export_file = False
+                                export_file = input("Please, give me another path and file: ")
+                            else:
+                                generateNewServiceFileFromTemplate(service_name, username, command, short_description,
+                                                                   long_description, lib_log_filename, export_file)
+                                is_valid_export_file = True
+                        cprint("The new script file is located at: \"" + export_file + "\". Enjoy :D", Colors.OK_GREEN)
+                        exit(0)
                 else:
                     raise NoRootPermissions(Colors.FAIL + "This app requires root access in order to work properly |"
                                                           " More info: " + MAIN_PROGRAM_URL + Colors.END_COLOR)
@@ -302,6 +367,17 @@ def main():
                                   "--version",
                                   action="store_true",
                                   help="Show program version")
+    argument_creator.add_argument("-e",
+                                  "--export",
+                                  type=str,
+                                  default="",
+                                  help="Exports the new service to a given file (so the user must register and "
+                                       "activate the service).")
+    argument_creator.add_argument("-f",
+                                  "--file",
+                                  type=str,
+                                  default="",
+                                  help="Loads the command from a given file. File must exists")
     args = argument_creator.parse_args()
     application(args)
 
