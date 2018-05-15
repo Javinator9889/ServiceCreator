@@ -203,11 +203,17 @@ def application(args: argparse.Namespace):
                     cprint("Script loaded. Let's start creating your new service\n")
 
                     service_folder = check_init_d_folder()
+                    print("Service folder: " + service_folder)
                     service_name = ask_for_service_name(service_folder)
+                    print("Service name: " + service_name)
                     username = ask_for_username_permissions()
+                    print("Username: " + username)
                     command = request_command_for_service(service_name)
+                    print("Command: " + command)
                     short_description = request_short_description()
+                    print("Short description: " + short_description)
                     long_description = request_long_description(short_description)
+                    print("Long description: " + long_description)
 
                     animator.animate(ANIM_CREATING_LOG_FILE, None, Colors.OK_BLUE)
                     generateLogFile(service_name, username)
