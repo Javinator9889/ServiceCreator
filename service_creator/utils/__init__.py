@@ -142,12 +142,12 @@ def generateRequiredFolders(service_name: str, username: str, animator):
     except FileExistsError:
         animator.force_stop()
         time.sleep(0.5)
-        new_name = ""
+        new_name = service_name
         are_valid_directories = False
         while not are_valid_directories:
             new_name = cleanString(
                 input(Colors.FAIL + "There was an error while trying to create a dir for the log file."
-                                    " Please, enter a custom name instead of \"" + service_name
+                                    " Please, enter a custom name instead of \"" + new_name
                       + Colors.END_COLOR + "\": "))
             try:
                 log_filename = "/var/log/" + new_name
