@@ -38,7 +38,7 @@ def cleanString(input_string: str):
     # type: () -> str
     import re
 
-    return re.sub("[^-a-zA-Z0-9]", '', input_string)
+    return re.sub("[^_-a-zA-Z0-9]", '', input_string)
 
 
 def shouldContinueWith(text: str):
@@ -136,13 +136,19 @@ def generateNewServiceFileFromTemplate(service_name: str, username: str, command
     import os
     from service_creator.values.Constants import OP_TEMPLATE_FILE, P_ETC_INIT_DIR
 
+    command_args_list = command.split()
+    command_with_no_args = command_args_list[0]
+    command_args_list.pop(0)
+    command_args = " ".join(command_args_list)
+
     web_template = requests.get(OP_TEMPLATE_FILE)
     template = web_template.text
 
     template = template.replace("<NAME>", service_name)
     template = template.replace("<SHORT-DESCRIPTION>", short_description)
     template = template.replace("<DESCRIPTION>", long_description)
-    template = template.replace("<COMMAND>", command)
+    template = template.replace("<COMMAND>", command_with_no_args)
+    template = template.replace("<ARGS>", command_args)
     template = template.replace("<USERNAME>", username)
 
     with open(P_ETC_INIT_DIR + service_name, 'w') as new_script_file:

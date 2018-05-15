@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          <NAME>
 # Required-Start:    $local_fs $network $named $time $syslog
@@ -9,117 +9,174 @@
 # Description:       <DESCRIPTION>
 ### END INIT INFO
 
-SCRIPT="<COMMAND>"
-RUNAS=<USERNAME>
-NAME=<NAME>
+#################################################################################
+#
+# start-stop-daemon template for creating service scripts out of executables
+#
+# Most of the installations can be achieved by changing the variables below.
+#
+# This template is meant to be used freely.
+# This template derives from a common template that is found on the web.
+# Unfortunately I could not find the original source to give the proper credits
+#
+# source: https://gist.github.com/bcap/5397674
+# Feel free to contribute!
+#################################################################################
 
-PIDFILE=/var/run/<NAME>.pid
-LOGFILE=/var/log/<NAME>.log
 
-start() {
-  if [ -f $PIDFILE ] && [ -s $PIDFILE ] && kill -0 $(cat $PIDFILE); then
-    echo 'Service already running' >&2
-    return 1
-  fi
-  echo 'Starting service…' >&2
-  local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
-  su -c "$CMD" $RUNAS > "$PIDFILE"
- # Try with this command line instead of above if not workable
- # su -s /bin/sh $RUNAS -c "$CMD" > "$PIDFILE"
- 
+#################################################################################
+# Fill/change the following vars
+#################################################################################
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin
+DESC="<SHORT-DESCRIPTION>"                # String describing the service
+NAME="<NAME>"                             # Name of the service, will be used in another vars
+DAEMON="<COMMAND>"                        # Path to the service executable, e.g. /usr/bin/java
+DAEMON_ARGS="<ARGS>"                      # Arguments passed to the service startup
+RUN_AS="<USERNAME>"                       # Which user will run the service
+
+WORK_DIR="/var/lib/${NAME}"               # Working directory where the service will be started, defaults to /var/lib/${NAME}
+USER=$RUN_AS                              # User that will spawn the process, defaults to the service name
+GROUP=$RUN_AS                             # Group that will spawn the process, defaults to the service name
+PIDFILE=/var/run/${NAME}.pid              # Pid file location, defaults to /var/run/${NAME}.pid
+SCRIPTNAME=/etc/init.d/$NAME              # Location of this init script
+LOG_PATH=/var/log/$NAME.log               # Standard output and Standard error will be outputted here
+
+START_STOP_DAEMON_OPTIONS="--chuid=$USER:$GROUP --background --chdir=$WORK_DIR"
+
+#################################################################################
+# Change the code below if needed
+#################################################################################
+
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
+
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
+
+#
+# Function that starts the daemon/service
+#
+do_start()
+{
+  # Return
+  #   0 if daemon has been started
+  #   1 if daemon was already running
+  #   2 if daemon could not be started
+  start-stop-daemon $START_STOP_DAEMON_OPTIONS --start --pidfile $PIDFILE --exec $DAEMON --test >> \
+  ${LOG_PATH}/${NAME}.out 2>> ${LOG_PATH}/${NAME}.err || return 1
+  start-stop-daemon $START_STOP_DAEMON_OPTIONS --start --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS >> \
+  ${LOG_PATH}/${NAME}.out 2>> ${LOG_PATH}/${NAME}.err || return 2
+
   sleep 2
-  PID=$(cat $PIDFILE)
-    if pgrep -u $RUNAS -f $NAME > /dev/null
-    then
-      echo "$NAME is now running, the PID is $PID"
-    else
-      echo ''
-      echo "Error! Could not start $NAME! - log is located at: \"$LOGFILE\""
-    fi
+  # Add code here, if necessary, that waits for the process to be ready
+  # to handle requests from services started subsequently which depend
+  # on this one.  As a last resort, sleep for some time.
 }
 
-stop() {
-  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
-    echo 'The service is not actually running' >&2
-    return 1
-  fi
-  echo 'Stopping service…' >&2
-  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
-  echo 'Service stopped' >&2
+#
+# Function that stops the daemon/service
+#
+do_stop()
+{
+  # Return
+  #   0 if daemon has been stopped
+  #   1 if daemon was already stopped
+  #   2 if daemon could not be stopped
+  #   other if a failure occurred
+  start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE
+  RETVAL="$?"
+  [ "$RETVAL" = 2 ] && return 2
+  # Wait for children to finish too if this is a daemon that forks
+  # and if the daemon is only ever run from this initscript.
+  # If the above conditions are not satisfied then add some other code
+  # that waits for the process to drop all resources that could be
+  # needed by services started subsequently.  A last resort is to
+  # sleep for some time.
+  start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
+  [ "$?" = 2 ] && return 2
+  # Many daemons don't delete their pidfiles when they exit.
+  rm -f $PIDFILE
+  return "$RETVAL"
 }
 
-uninstall() {
-  echo -n "Are you sure you want to uninstall this service? That cannot be undone [yes|no]: "
-  local SURE
-  read SURE
-  if [ "$SURE" = "yes" ]; then
-    stop
-    rm -f "$PIDFILE"
-    echo "Notice: log file was not removed: $LOGFILE" >&2
-    update-rc.d -f $NAME remove
-    rm -fv "$0"
-  else
-    echo "Aborting..."
-  fi
+#
+# Function that sends a SIGHUP to the daemon/service
+#
+do_reload() {
+  #
+  # If the daemon can reload its configuration without
+  # restarting (for example, when it is sent a SIGHUP),
+  # then implement that here.
+  #
+  start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
+  return 0
 }
-
-status() {
-    printf "%-50s" "Checking <NAME>..."
-    if [ -f $PIDFILE ] && [ -s $PIDFILE ]; then
-        PID=$(cat $PIDFILE)
-            if [ -z "$(ps axf | grep ${PID} | grep -v grep)" ]; then
-                printf "%s\n" "The process appears to be dead but pidfile still exists"
-            else    
-                echo "Running, the PID is $PID"
-            fi
-    else
-        printf "%s\n" "Service not running"
-    fi
-}
-
-disable() {
-    printf "Disabling service from boot..."
-    printf "This will cause your service not running on boot and stopping it right now"
-    stop
-    update-rc.d -f $NAME remove
-    printf "Service correctly disabled"
-}
-
-enable_again() {
-    printf "Enabling service..."
-    printf "This will cause your service running on boot and restarting it right now"
-    stop
-    start
-    update-rc.d $NAME defaults
-    printf "Service correctly enabled"
-}
-
 
 case "$1" in
   start)
-    start
-    ;;
+    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+    do_start
+    case "$?" in
+      0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+      2)   [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+  ;;
   stop)
-    stop
-    ;;
+    [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+    do_stop
+    case "$?" in
+      0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+      2)   [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+  ;;
   status)
-    status
-    ;;
-  uninstall)
-    uninstall
-    ;;
-  restart)
-    stop
-    start
-    ;;
-  disable)
-    disable
-    ;;
-  enable)
-    enable_again
-    ;;
+    status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+  ;;
+  #reload|force-reload)
+  #
+  # If do_reload() is not implemented then leave this commented out
+  # and leave 'force-reload' as an alias for 'restart'.
+  #
+  #log_daemon_msg "Reloading $DESC" "$NAME"
+  #do_reload
+  #log_end_msg $?
+  #;;
+  restart|force-reload)
+  #
+  # If the "reload" option is implemented then remove the
+  # 'force-reload' alias
+  #
+    log_daemon_msg "Restarting $DESC" "$NAME"
+    do_stop
+    case "$?" in
+      0|1)
+      do_start
+      case "$?" in
+        0) log_end_msg 0 ;;
+        1) log_end_msg 1 ;; # Old process is still running
+        *) log_end_msg 1 ;; # Failed to start
+      esac
+      ;;
+      *)
+        # Failed to stop
+        log_end_msg 1
+      ;;
+    esac
+  ;;
   *)
-    echo "Usage: $0 {start|stop|status|restart|uninstall|disable|enable}"
+  #echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
+  echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+  exit 3
+  ;;
 esac
 
-# vim: syntax=sh ts=4 sw=4 sts=4 sr noet
+:
