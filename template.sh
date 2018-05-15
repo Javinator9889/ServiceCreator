@@ -202,7 +202,7 @@ case "$1" in
     ;;
   *)
   #echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
-  echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+  echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload|uninstall|disable|enable}" >&2
   exit 3
   ;;
 esac
