@@ -127,17 +127,38 @@ def getUsernameGID(username: str):
 
 
 def generateRequiredFolders(service_name: str, username: str):
+    # type: () -> str
     import os
+    from service_creator.output import OutputColors as Colors
 
-    log_filename = "/var/log/" + service_name
-    os.mkdir(log_filename)
-    os.chown(log_filename, getUsernameUID(username), getUsernameGID(username))
-    lib_filename = "/var/lib/" + service_name
-    os.mkdir(lib_filename)
+    try:
+        log_filename = "/var/log/" + service_name
+        os.mkdir(log_filename)
+        os.chown(log_filename, getUsernameUID(username), getUsernameGID(username))
+        lib_filename = "/var/lib/" + service_name
+        os.mkdir(lib_filename)
+        return service_name
+    except FileExistsError:
+        new_name = ""
+        are_valid_directories = False
+        while not are_valid_directories:
+            new_name = input(Colors.FAIL + "There was an error while trying to create a dir for the log file."
+                                           " Please, enter a custom name instead of \"" + service_name
+                             + Colors.END_COLOR + "\": ")
+            try:
+                log_filename = "/var/log/" + new_name
+                os.mkdir(log_filename)
+                os.chown(log_filename, getUsernameUID(username), getUsernameGID(username))
+                lib_filename = "/var/lib/" + new_name
+                os.mkdir(lib_filename)
+                are_valid_directories = True
+            except FileExistsError:
+                are_valid_directories = False
+        return new_name
 
 
 def generateNewServiceFileFromTemplate(service_name: str, username: str, command: str, short_description: str,
-                                       long_description: str):
+                                       long_description: str, lib_log_filename: str):
     import requests
     import os
     from service_creator.values.Constants import OP_TEMPLATE_FILE, P_ETC_INIT_DIR

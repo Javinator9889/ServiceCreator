@@ -220,12 +220,12 @@ def application(args: argparse.Namespace):
                     print("Long description: " + long_description)
 
                     animator.animate(ANIM_CREATING_FOLDERS, None, Colors.OK_BLUE)
-                    generateRequiredFolders(service_name, username)
+                    lib_log_filename = generateRequiredFolders(service_name, username)
                     animator.stop()
                     time.sleep(1)
                     animator.animate(ANIM_GENERATING_FILE, None, Colors.OK_BLUE)
                     generateNewServiceFileFromTemplate(service_name, username, command, short_description,
-                                                       long_description)
+                                                       long_description, lib_log_filename)
                     animator.stop()
                     time.sleep(1)
                     animator.animate(ANIM_APPLYING_NEW_CONFIGURATION, None, Colors.OK_BLUE)
