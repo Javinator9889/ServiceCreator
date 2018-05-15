@@ -256,6 +256,8 @@ def application(args: argparse.Namespace):
             exit(-3)
         except Exception as e:
             import traceback
+            animator.force_stop()
+            time.sleep(1)
 
             print(e)
             traceback.print_exc()
