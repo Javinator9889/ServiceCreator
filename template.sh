@@ -40,7 +40,7 @@ USER=$RUN_AS                              # User that will spawn the process, de
 GROUP=$RUN_AS                             # Group that will spawn the process, defaults to the service name
 PIDFILE=/var/run/${NAME}.pid              # Pid file location, defaults to /var/run/${NAME}.pid
 SCRIPTNAME=/etc/init.d/$NAME              # Location of this init script
-LOG_PATH=/var/log/$NAME.log               # Standard output and Standard error will be outputted here
+LOG_PATH=/var/log/$NAME                    # Standard output and Standard error will be outputted here
 
 START_STOP_DAEMON_OPTIONS="--chuid=$USER:$GROUP --background --chdir=$WORK_DIR"
 

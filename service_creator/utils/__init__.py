@@ -124,9 +124,10 @@ def getUsernameGID(username: str):
 def generateLogFile(service_name: str, username: str):
     import os
 
-    filename = "/var/log/" + service_name + ".log"
-    new_file = open(filename, 'w')
-    new_file.close()
+    filename = "/var/log/" + service_name  # + ".log"
+    os.mkdir(filename)
+    # new_file = open(filename, 'w')
+    # new_file.close()
     os.chown(filename, getUsernameUID(username), getUsernameGID(username))
 
 
@@ -136,10 +137,15 @@ def generateNewServiceFileFromTemplate(service_name: str, username: str, command
     import os
     from service_creator.values.Constants import OP_TEMPLATE_FILE, P_ETC_INIT_DIR
 
+    from pprint import pprint
     command_args_list = command.split()
+    pprint(command_args_list)
     command_with_no_args = command_args_list[0]
+    pprint(command_with_no_args)
     command_args_list.pop(0)
+    pprint(command_args_list)
     command_args = " ".join(command_args_list)
+    pprint(command_args)
 
     web_template = requests.get(OP_TEMPLATE_FILE)
     template = web_template.text
