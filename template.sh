@@ -119,6 +119,7 @@ uninstall() {
     echo "Notice: log path was not removed: $LOG_PATH" >&2
     update-rc.d -f "$NAME" remove
     rm -fv "$0"
+    rm -r "$WORK_DIR"
   else
     echo "Aborting..."
   fi
