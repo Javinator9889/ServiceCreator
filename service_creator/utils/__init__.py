@@ -75,12 +75,13 @@ def makeBashScript(filename: str, new_sh_file: str):
     import os
     from service_creator.values.Constants import OP_BASH_HEADER, OP_SH_HEADER, P_USR_LOCAL_BIN_DIR
 
+    from pprint import pprint
     with open(filename, 'r') as script:
         script_content = script.readlines()
+    pprint(script_content)
     if (script_content[0] != OP_BASH_HEADER) or (script_content[0] != OP_SH_HEADER):
         script_content.insert(0, OP_SH_HEADER + "\n\n")
     usr_exec_file = os.path.basename(new_sh_file)
-    from pprint import pprint
     pprint(script_content)
     pprint("Path: " + P_USR_LOCAL_BIN_DIR + usr_exec_file)
     if os.path.exists(P_USR_LOCAL_BIN_DIR + usr_exec_file):
