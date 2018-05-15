@@ -109,7 +109,7 @@ def getCommandFullPath(command: str):
     command_as_list.pop(0)
     args = " ".join(command_as_list)
 
-    return which(base_command) + args
+    return which(base_command) + " " + args
 
 
 def getUsernameUID(username: str):
