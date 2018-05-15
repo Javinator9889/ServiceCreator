@@ -48,6 +48,7 @@ def ask_for_service_name(service_folder: str):
     from .utils import cleanString
 
     # service_name = ""
+    final_service_name = ""
     is_valid_service_name = False
     while not is_valid_service_name:
         service_name = input(I_SERVICE_NAME)
@@ -59,13 +60,14 @@ def ask_for_service_name(service_folder: str):
                    Colors.FAIL)
             is_valid_service_name = False
         else:
-            if shouldContinueWith(I_CORRECT_SERVICE_NAME.format(service_name)):
-                service_name = cleanString(service_name)
+            final_service_name = cleanString(service_name)
+            if shouldContinueWith(I_CORRECT_SERVICE_NAME.format(final_service_name)):
+                # service_name = cleanString(service_name)
                 is_valid_service_name = True
             else:
                 cprint("Please, give me the new name you want the service to have", Colors.UNDERLINE)
                 is_valid_service_name = False
-    return service_name
+    return final_service_name
 
 
 def ask_for_username_permissions():
@@ -124,6 +126,7 @@ def request_command_for_service(service_name: str):
         is_valid_script_filename = False
         # new_name = os.path.basename(filename)
         new_name = service_name
+        command = ""
         while not is_valid_script_filename:
             if not makeBashScript(filename, new_name):
                 new_name = input(Colors.FAIL + "We found an error creating the executable file. "
@@ -132,7 +135,9 @@ def request_command_for_service(service_name: str):
             else:
                 is_valid_script_filename = True
                 command = "/usr/local/bin/" + new_name
+        return command
     else:
+        command = ""
         is_valid_command = False
         while not is_valid_command:
             command = input(I_COMMAND)
@@ -146,7 +151,7 @@ def request_command_for_service(service_name: str):
             else:
                 cprint("The specified command does not exist.", Colors.FAIL)
                 is_valid_command = False
-    return command
+        return command
 
 
 def request_short_description():
