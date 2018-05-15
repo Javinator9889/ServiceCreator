@@ -108,17 +108,36 @@ do_stop()
   return "$RETVAL"
 }
 
-#
-# Function that sends a SIGHUP to the daemon/service
-#
-do_reload() {
-  #
-  # If the daemon can reload its configuration without
-  # restarting (for example, when it is sent a SIGHUP),
-  # then implement that here.
-  #
-  start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
-  return 0
+uninstall() {
+  echo -n "Are you sure you want to uninstall this service? That cannot be undone [yes|no]: "
+  local SURE
+  read SURE
+  if [ "$SURE" = "yes" ]; then
+    stop
+    rm -f "$PIDFILE"
+    echo "Notice: log file was not removed: $LOGFILE" >&2
+    update-rc.d -f "$NAME" remove
+    rm -fv "$0"
+  else
+    echo "Aborting..."
+  fi
+}
+
+disable() {
+    printf "Disabling service from boot..."
+    printf "This will cause your service not running on boot and stopping it right now"
+    stop
+    update-rc.d -f "$NAME" remove
+    printf "Service correctly disabled"
+}
+
+enable_again() {
+    printf "Enabling service..."
+    printf "This will cause your service running on boot and restarting it right now"
+    stop
+    start
+    update-rc.d "$NAME" defaults
+    printf "Service correctly enabled"
 }
 
 case "$1" in
@@ -172,6 +191,15 @@ case "$1" in
       ;;
     esac
   ;;
+  uninstall)
+    uninstall
+    ;;
+  disable)
+    disable
+    ;;
+  enable)
+    enable_again
+    ;;
   *)
   #echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
   echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
