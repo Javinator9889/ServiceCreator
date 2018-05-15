@@ -113,7 +113,7 @@ uninstall() {
   local SURE
   read SURE
   if [ "$SURE" = "yes" ]; then
-    stop
+    do_stop
     rm -f "$PIDFILE"
     echo "Notice: log file was not removed: $LOGFILE" >&2
     update-rc.d -f "$NAME" remove
@@ -126,7 +126,7 @@ uninstall() {
 disable() {
     printf "Disabling service from boot..."
     printf "This will cause your service not running on boot and stopping it right now"
-    stop
+    do_stop
     update-rc.d -f "$NAME" remove
     printf "Service correctly disabled"
 }
@@ -134,8 +134,8 @@ disable() {
 enable_again() {
     printf "Enabling service..."
     printf "This will cause your service running on boot and restarting it right now"
-    stop
-    start
+    do_stop
+    do_start
     update-rc.d "$NAME" defaults
     printf "Service correctly enabled"
 }
