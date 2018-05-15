@@ -1,6 +1,7 @@
 import argparse
 import time
 import os
+import readline
 
 from .values.Constants import (MAIN_PROGRAM_NAME,
                                MAIN_PROGRAM_COMMAND,
@@ -185,6 +186,21 @@ def request_long_description(short_description: str):
     return long_description
 
 
+class AutoCompletion:
+    import glob
+
+    def __init__(self):
+        self.setup()
+
+    def setup(self):
+        readline.parse_and_bind("tab: complete")
+        readline.set_completer_delims(" \t\n;")
+        readline.set_completer(self.completer)
+
+    def completer(self, text, state):
+        return (self.glob.glob(text + '*') + [None])[state]
+
+
 def application(args: argparse.Namespace):
     is_usage_chosen = args.usage
     is_version_chosen = args.version
@@ -196,6 +212,7 @@ def application(args: argparse.Namespace):
               + MAIN_PROGRAM_URL + Colors.END_COLOR)
         exit(2)
     else:
+        AutoCompletion()
         animator = Animation(0.1)
         try:
             if isNewVersionAvailable():
