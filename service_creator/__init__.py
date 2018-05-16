@@ -1,7 +1,10 @@
 import argparse
 import time
 import os
-import readline
+try:
+    import readline
+except ModuleNotFoundError:
+    print("Running Windows")
 
 from .values.Constants import (MAIN_PROGRAM_NAME,
                                MAIN_PROGRAM_COMMAND,

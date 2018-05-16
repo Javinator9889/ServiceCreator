@@ -169,16 +169,12 @@ def generateNewServiceFileFromTemplate(service_name: str, username: str, command
     import requests
     import os
     from service_creator.values.Constants import OP_TEMPLATE_FILE
+    from service_creator.output import OutputColors as Colors
 
-    from pprint import pprint
     command_args_list = command.split()
-    pprint(command_args_list)
     command_with_no_args = command_args_list[0]
-    pprint(command_with_no_args)
     command_args_list.pop(0)
-    pprint(command_args_list)
     command_args = " ".join(command_args_list)
-    pprint(command_args)
 
     web_template = requests.get(OP_TEMPLATE_FILE)
     template = web_template.text
@@ -191,9 +187,13 @@ def generateNewServiceFileFromTemplate(service_name: str, username: str, command
     template = template.replace("<ARGS>", command_args)
     template = template.replace("<USERNAME>", username)
 
-    with open(export_path, 'w') as new_script_file:
-        new_script_file.write(template)
-    os.chmod(export_path, 0o755)
+    try:
+        with open(export_path, 'w') as new_script_file:
+            new_script_file.write(template)
+        os.chmod(export_path, 0o755)
+    except OSError as e:
+        raise OSError(Colors.FAIL + "There was an error while creating your script. Maybe the file exists with other "
+                                    "permissions or similar. More info: " + str(e) + Colors.END_COLOR)
 
 
 def applyConfigurationIsSuccessful(service_name: str):
