@@ -48,7 +48,6 @@ def ask_for_service_name(service_folder: str):
     from .values.Constants import I_SERVICE_NAME, I_CORRECT_SERVICE_NAME
     from .utils import cleanString
 
-    # service_name = ""
     final_service_name = ""
     is_valid_service_name = False
     while not is_valid_service_name:
@@ -63,7 +62,6 @@ def ask_for_service_name(service_folder: str):
         else:
             final_service_name = cleanString(service_name)
             if shouldContinueWith(I_CORRECT_SERVICE_NAME.format(final_service_name)):
-                # service_name = cleanString(service_name)
                 is_valid_service_name = True
             else:
                 cprint("Please, give me the new name you want the service to have", Colors.UNDERLINE)
@@ -97,45 +95,47 @@ def ask_for_username_permissions():
     return username
 
 
-def request_command_for_service(service_name: str):
+def request_command_for_service(service_name: str, export_file: str):
     # type: () -> str
-    # import os
     from .values.Constants import I_READ_COMMAND_FROM_FILE, I_FILENAME, I_COMMAND, I_FILENAME_DESC
     from .utils import makeBashScript, ifCommandExists, getCommandFullPath
 
     if shouldContinueWith(I_READ_COMMAND_FROM_FILE):
-        filename = ""
-        print(I_FILENAME_DESC)
-        is_valid_filename = False
-        while not is_valid_filename:
-            filename = input(I_FILENAME)
-            if (filename == "") or (filename is None):
-                cprint("Empty values are not allowed. Please, provide a proper filename",
-                       Colors.FAIL)
-                is_valid_filename = False
-            elif not os.path.exists(filename):
-                cprint("We have not found the file. Please, enter the full path for the file",
-                       Colors.FAIL)
-                is_valid_filename = False
-            elif os.path.isdir(filename):
-                cprint("The provided path is a directory. Please, use a full path with the filename",
-                       Colors.FAIL)
-                is_valid_filename = False
-            else:
-                is_valid_filename = True
-        is_valid_script_filename = False
-        # new_name = os.path.basename(filename)
-        new_name = service_name
-        command = ""
-        while not is_valid_script_filename:
-            if not makeBashScript(filename, new_name):
-                new_name = input(Colors.FAIL + "We found an error creating the executable file. "
-                                               "Please, enter a new name: " + Colors.END_COLOR)
-                is_valid_script_filename = False
-            else:
-                is_valid_script_filename = True
-                command = "/usr/local/bin/" + new_name
-        return command
+        if export_file != "":
+            cprint("Exporting file will not create an executable file for you by reading a custom file. You must add"
+                   " it manually later", Colors.WARNING)
+        else:
+            filename = ""
+            print(I_FILENAME_DESC)
+            is_valid_filename = False
+            while not is_valid_filename:
+                filename = input(I_FILENAME)
+                if (filename == "") or (filename is None):
+                    cprint("Empty values are not allowed. Please, provide a proper filename",
+                           Colors.FAIL)
+                    is_valid_filename = False
+                elif not os.path.exists(filename):
+                    cprint("We have not found the file. Please, enter the full path for the file",
+                           Colors.FAIL)
+                    is_valid_filename = False
+                elif os.path.isdir(filename):
+                    cprint("The provided path is a directory. Please, use a full path with the filename",
+                           Colors.FAIL)
+                    is_valid_filename = False
+                else:
+                    is_valid_filename = True
+            is_valid_script_filename = False
+            new_name = service_name
+            command = ""
+            while not is_valid_script_filename:
+                if not makeBashScript(filename, new_name):
+                    new_name = input(Colors.FAIL + "We found an error creating the executable file. "
+                                                   "Please, enter a new name: " + Colors.END_COLOR)
+                    is_valid_script_filename = False
+                else:
+                    is_valid_script_filename = True
+                    command = "/usr/local/bin/" + new_name
+            return command
     else:
         final_command = ""
         is_valid_command = False
@@ -186,42 +186,46 @@ def request_long_description(short_description: str):
     return long_description
 
 
-def load_command_from_file(filename: str, service_name: str):
+def load_command_from_file(filename: str, service_name: str, export_file: str):
     from .values.Constants import I_FILENAME
     from .utils import makeBashScript
 
-    is_valid_filename = False
-    while not is_valid_filename:
-        if (filename == "") or (filename is None):
-            cprint("Empty values are not allowed. Please, provide a proper filename",
-                   Colors.FAIL)
-            is_valid_filename = False
-            filename = input(I_FILENAME)
-        elif not os.path.exists(filename):
-            cprint("We have not found the file. Please, enter the full path for the file",
-                   Colors.FAIL)
-            is_valid_filename = False
-            filename = input(I_FILENAME)
-        elif os.path.isdir(filename):
-            cprint("The provided path is a directory. Please, use a full path with the filename",
-                   Colors.FAIL)
-            is_valid_filename = False
-            filename = input(I_FILENAME)
-        else:
-            is_valid_filename = True
-    is_valid_script_filename = False
+    if export_file != "":
+        cprint("Exporting file will not create an executable file for you by reading a custom file. You must add"
+               " it manually later", Colors.WARNING)
+    else:
+        is_valid_filename = False
+        while not is_valid_filename:
+            if (filename == "") or (filename is None):
+                cprint("Empty values are not allowed. Please, provide a proper filename",
+                       Colors.FAIL)
+                is_valid_filename = False
+                filename = input(I_FILENAME)
+            elif not os.path.exists(filename):
+                cprint("We have not found the file. Please, enter the full path for the file",
+                       Colors.FAIL)
+                is_valid_filename = False
+                filename = input(I_FILENAME)
+            elif os.path.isdir(filename):
+                cprint("The provided path is a directory. Please, use a full path with the filename",
+                       Colors.FAIL)
+                is_valid_filename = False
+                filename = input(I_FILENAME)
+            else:
+                is_valid_filename = True
+        is_valid_script_filename = False
 
-    new_name = service_name
-    command = ""
-    while not is_valid_script_filename:
-        if not makeBashScript(filename, new_name):
-            new_name = input(Colors.FAIL + "We found an error creating the executable file. "
-                                           "Please, enter a new name: " + Colors.END_COLOR)
-            is_valid_script_filename = False
-        else:
-            is_valid_script_filename = True
-            command = "/usr/local/bin/" + new_name
-    return command
+        new_name = service_name
+        command = ""
+        while not is_valid_script_filename:
+            if not makeBashScript(filename, new_name):
+                new_name = input(Colors.FAIL + "We found an error creating the executable file. "
+                                               "Please, enter a new name: " + Colors.END_COLOR)
+                is_valid_script_filename = False
+            else:
+                is_valid_script_filename = True
+                command = "/usr/local/bin/" + new_name
+        return command
 
 
 class AutoCompletion:
@@ -260,27 +264,21 @@ def application(args: argparse.Namespace):
                        + MAIN_PROGRAM_URL, Colors.BOLD)
                 time.sleep(8)
             if isRunningLinux():
-                if isUserAdmin():
+                if isUserAdmin() or export_file != "":
                     cprint("Script loaded. Let's start creating your new service\n")
 
                     if export_file == "":
                         service_folder = check_init_d_folder()
                     else:
                         service_folder = export_file
-                    print("Service folder: " + service_folder)
                     service_name = ask_for_service_name(service_folder)
-                    print("Service name: " + service_name)
                     username = ask_for_username_permissions()
-                    print("Username: " + username)
                     if load_file == "":
-                        command = request_command_for_service(service_name)
+                        command = request_command_for_service(service_name, export_file)
                     else:
-                        command = load_command_from_file(load_file, service_name)
-                    print("Command: " + command)
+                        command = load_command_from_file(load_file, service_name, export_file)
                     short_description = request_short_description()
-                    print("Short description: " + short_description)
                     long_description = request_long_description(short_description)
-                    print("Long description: " + long_description)
 
                     animator.animate(ANIM_CREATING_FOLDERS, None, Colors.OK_BLUE)
                     lib_log_filename = generateRequiredFolders(service_name, username, animator)
@@ -347,12 +345,10 @@ def application(args: argparse.Namespace):
             time.sleep(1)
             exit(-3)
         except Exception as e:
-            import traceback
             animator.force_stop()
             time.sleep(1)
 
             print(e)
-            traceback.print_exc()
 
 
 def main():
