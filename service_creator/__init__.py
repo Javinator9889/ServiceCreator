@@ -292,7 +292,8 @@ def application(args: argparse.Namespace):
                         time.sleep(1)
                         animator.animate(ANIM_GENERATING_FILE, None, Colors.OK_BLUE)
                         generateNewServiceFileFromTemplate(service_name, username, command, short_description,
-                                                           long_description, lib_log_filename, service_folder)
+                                                           long_description, lib_log_filename,
+                                                           service_folder + service_name)
                         animator.stop()
                         time.sleep(1)
                         animator.animate(ANIM_APPLYING_NEW_CONFIGURATION, None, Colors.OK_BLUE)
