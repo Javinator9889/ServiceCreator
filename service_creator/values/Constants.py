@@ -25,10 +25,10 @@ MAIN_PROGRAM_USAGE = Colors.HEADER + MAIN_PROGRAM_NAME + Colors.END_COLOR + "\nU
 MAIN_PROGRAM_URL = "https://github.com/Javinator9889/ServiceCreator"
 
 # Other params
-OP_VERSION_RAW = "https://github.com/Javinator9889/ServiceCreator/raw/development/version.json"
+OP_VERSION_RAW = "https://github.com/Javinator9889/ServiceCreator/raw/master/version.json"
 OP_BASH_HEADER = "#!/bin/bash"
 OP_SH_HEADER = "#!/bin/sh"
-OP_TEMPLATE_FILE = "https://raw.githubusercontent.com/Javinator9889/ServiceCreator/development/template.sh"
+OP_TEMPLATE_FILE = "https://raw.githubusercontent.com/Javinator9889/ServiceCreator/master/template.sh"
 
 # Paths
 P_ETC_INIT_DIR = "/etc/init.d/"
