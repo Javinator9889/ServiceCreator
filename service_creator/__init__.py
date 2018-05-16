@@ -103,7 +103,8 @@ def request_command_for_service(service_name: str, export_file: str):
     if shouldContinueWith(I_READ_COMMAND_FROM_FILE):
         if export_file != "":
             cprint("Exporting file will not create an executable file for you by reading a custom file. You must add"
-                   " it manually later", Colors.WARNING)
+                   " it manually later | For more information see: "
+                   "\"https://github.com/Javinator9889/ServiceCreator#why-root\"", Colors.WARNING)
         else:
             filename = ""
             print(I_FILENAME_DESC)
@@ -192,7 +193,8 @@ def load_command_from_file(filename: str, service_name: str, export_file: str):
 
     if export_file != "":
         cprint("Exporting file will not create an executable file for you by reading a custom file. You must add"
-               " it manually later", Colors.WARNING)
+               " it manually later | For more information see: "
+               "\"https://github.com/Javinator9889/ServiceCreator#why-root\"", Colors.WARNING)
     else:
         is_valid_filename = False
         while not is_valid_filename:
