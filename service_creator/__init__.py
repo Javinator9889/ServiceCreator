@@ -282,11 +282,11 @@ def application(args: argparse.Namespace):
                     short_description = request_short_description()
                     long_description = request_long_description(short_description)
 
-                    animator.animate(ANIM_CREATING_FOLDERS, None, Colors.OK_BLUE)
-                    lib_log_filename = generateRequiredFolders(service_name, username, animator)
-                    animator.stop()
-                    time.sleep(1)
                     if export_file == "":
+                        animator.animate(ANIM_CREATING_FOLDERS, None, Colors.OK_BLUE)
+                        lib_log_filename = generateRequiredFolders(service_name, username, animator)
+                        animator.stop()
+                        time.sleep(1)
                         animator.animate(ANIM_GENERATING_FILE, None, Colors.OK_BLUE)
                         generateNewServiceFileFromTemplate(service_name, username, command, short_description,
                                                            long_description, lib_log_filename, service_folder)
@@ -319,6 +319,9 @@ def application(args: argparse.Namespace):
                                    " logs", Colors.FAIL)
                             exit(-2)
                     else:
+                        cprint("You must create folders for your service at \"/var/log/\" and \"/var/lib/\" with your"
+                               " service name. In the script, they are: /var/log/" + service_name + " and /var/lib/"
+                               + service_name + ". If you change them, you must edit your service", Colors.WARNING)
                         is_valid_export_file = False
                         while not is_valid_export_file:
                             if not os.path.exists(os.path.dirname(export_file)):
@@ -331,7 +334,7 @@ def application(args: argparse.Namespace):
                                 export_file = input("Please, give me another path and file: ")
                             else:
                                 generateNewServiceFileFromTemplate(service_name, username, command, short_description,
-                                                                   long_description, lib_log_filename, export_file)
+                                                                   long_description, service_name, export_file)
                                 is_valid_export_file = True
                         cprint("The new script file is located at: \"" + export_file + "\". Enjoy :D", Colors.OK_GREEN)
                         exit(0)
